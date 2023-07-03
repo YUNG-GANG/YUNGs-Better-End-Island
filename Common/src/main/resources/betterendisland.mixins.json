@@ -4,6 +4,9 @@
   "compatibilityLevel": "JAVA_17",
   "refmap": "betterendisland.refmap.json",
   "mixins": [
+    "EndDragonFightMixin",
+    "EndSpikeMixin",
+    "SpikeFeatureMixin"
   ],
   "injectors": {
     "defaultRequire": 1
