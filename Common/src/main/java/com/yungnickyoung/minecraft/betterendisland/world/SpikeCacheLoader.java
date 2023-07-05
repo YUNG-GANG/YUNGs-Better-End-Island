@@ -1,4 +1,4 @@
-package com.yungnickyoung.minecraft.betterendisland.world.feature;
+package com.yungnickyoung.minecraft.betterendisland.world;
 
 import com.google.common.cache.CacheLoader;
 import com.google.common.collect.Lists;
