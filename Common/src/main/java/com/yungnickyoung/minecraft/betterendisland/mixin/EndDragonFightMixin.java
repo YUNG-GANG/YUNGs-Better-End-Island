@@ -30,6 +30,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -85,7 +86,17 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         if (tag.getBoolean("IsRespawning")) {
             this.dragonRespawnStage = DragonRespawnStage.START;
         }
+//        else if (tag.contains("DragonRespawnStage")) {
+//            this.dragonRespawnStage = DragonRespawnStage.byName(tag.getString("DragonRespawnStage"));
+//        }
     }
+
+//    @Inject(method = "saveData", at = @At("RETURN"))
+//    public void saveData(CallbackInfoReturnable<CompoundTag> cir) {
+//        if (this.dragonRespawnStage != null) {
+//            cir.getReturnValue().putString("DragonRespawnStage", this.dragonRespawnStage.getSerializedName());
+//        }
+//    }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void betterendisland_tickFight(CallbackInfo ci) {

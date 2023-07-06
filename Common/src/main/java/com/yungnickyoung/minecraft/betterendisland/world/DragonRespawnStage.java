@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
@@ -11,10 +12,11 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
-public enum DragonRespawnStage {
-    START {
+public enum DragonRespawnStage implements StringRepresentable {
+    START("start") {
         public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer, BlockPos portalPos) {
             // Singular tick - update beam target pos for all crystals
             BlockPos beamTargetPos = new BlockPos(0, 128, 0);
@@ -22,7 +24,7 @@ public enum DragonRespawnStage {
             ((IDragonFight) dragonFight).setDragonRespawnStage(PREPARING_TO_SUMMON_PILLARS);
         }
     },
-    PREPARING_TO_SUMMON_PILLARS {
+    PREPARING_TO_SUMMON_PILLARS("preparing_to_summon_pillars") {
         public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer, BlockPos portalPos) {
             // 100 ticks - growl sounds
             int totalPhaseTime = 100;
@@ -35,7 +37,7 @@ public enum DragonRespawnStage {
             }
         }
     },
-    SUMMONING_PILLARS {
+    SUMMONING_PILLARS("summoning_pillars") {
         public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer, BlockPos portalPos) {
             // Summons all spikes. 40 ticks per spike.
             int ticksPerSpike = 40;
@@ -72,7 +74,7 @@ public enum DragonRespawnStage {
 
         }
     },
-    SUMMONING_DRAGON {
+    SUMMONING_DRAGON("summoning_dragon") {
         public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer, BlockPos portalPos) {
             int totalPhaseTime = 100;
             if (phaseTimer >= totalPhaseTime) {
@@ -96,14 +98,32 @@ public enum DragonRespawnStage {
 
         }
     },
-    END {
-        public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> $$2, int phaseTimer, BlockPos $$4) {
+    END("end") {
+        public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer, BlockPos portalPos) {
         }
     };
 
-    public abstract void tick(ServerLevel var1, EndDragonFight var2, List<EndCrystal> var3, int var4, BlockPos var5);
+    public static final StringRepresentable.EnumCodec<DragonRespawnStage> CODEC = StringRepresentable.fromEnum(DragonRespawnStage::values);
+
+    @Nullable
+    public static DragonRespawnStage byName(@Nullable String name) {
+        return CODEC.byName(name);
+    }
+
+    private final String name;
+
+    DragonRespawnStage(String name) {
+        this.name = name.toLowerCase();
+    }
+
+    @Override
+    public String getSerializedName() {
+        return this.name;
+    }
 
     private static void broadcastDragonGrowlSound(ServerLevel level) {
         level.levelEvent(3001, new BlockPos(0, 128, 0), 0);
     }
+
+    public abstract void tick(ServerLevel var1, EndDragonFight var2, List<EndCrystal> var3, int var4, BlockPos var5);
 }
