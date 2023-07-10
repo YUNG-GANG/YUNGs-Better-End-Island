@@ -89,17 +89,10 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             this.hasDragonEverSpawned = false;
         }
         this.dragonEvent.setVisible(false);
-
-//        else if (tag.contains("DragonRespawnStage")) {
-//            this.dragonRespawnStage = DragonRespawnStage.byName(tag.getString("DragonRespawnStage"));
-//        }
     }
 
     @Inject(method = "saveData", at = @At("RETURN"))
     public void betterendisland_saveData(CallbackInfoReturnable<CompoundTag> cir) {
-//        if (this.dragonRespawnStage != null) {
-//            cir.getReturnValue().putString("DragonRespawnStage", this.dragonRespawnStage.getSerializedName());
-//        }
         cir.getReturnValue().putBoolean("FirstExitPortalSpawn", this.firstExitPortalSpawn);
         cir.getReturnValue().putBoolean("HasDragonEverSpawned", this.hasDragonEverSpawned);
     }
@@ -150,7 +143,6 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         ci.cancel();
     }
 
-//    @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     @Unique
     private void scanForInitialState() {
         BetterEndIslandCommon.LOGGER.info("Scanning for legacy world dragon fight...");
@@ -184,7 +176,6 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         if (!this.previouslyKilled && this.dragonKilled) {
             this.dragonKilled = false;
         }
-//        ci.cancel();
     }
 
     @Inject(method = "onCrystalDestroyed", at = @At("HEAD"), cancellable = true)
@@ -194,7 +185,6 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             this.dragonRespawnStage = null;
             this.respawnTime = 0;
             this.resetSpikeCrystals();
-//            this.spawnExitPortal(true); // Don't think we need to reset portal state when respawning is aborted?
         } else {
             this.updateCrystalCount();
             Entity dragonEntity = this.level.getEntity(this.dragonUUID);
@@ -223,18 +213,9 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 portalPos = this.portalLocation;
             }
 
-            List<EndCrystal> allCrystals = Lists.newArrayList();
-            BlockPos blockPos = portalPos.above(1);
-
-            for (Direction direction : Direction.Plane.HORIZONTAL) {
-                AABB crystalCheckbox = new AABB(blockPos.relative(direction, 7));
-                List<EndCrystal> crystalsInDirection = this.level.getEntitiesOfClass(EndCrystal.class, crystalCheckbox);
-                if (crystalsInDirection.isEmpty()) {
-                    return;
-                }
-
-                allCrystals.addAll(crystalsInDirection);
-            }
+            // Check for all 4 summoning crystals
+            List<EndCrystal> allCrystals = this.checkRespawnCrystals(portalPos.above(1));
+            if (allCrystals.size() != 4) return;
 
             BetterEndIslandCommon.LOGGER.info("Found all crystals, respawning dragon.");
             this.respawnDragon(allCrystals);
@@ -263,65 +244,36 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             portalPos = this.portalLocation;
         }
 
-        List<EndCrystal> allCrystals = Lists.newArrayList();
-        BlockPos blockPos = portalPos.above(1);
+        // Check for all 4 summoning crystals
+        List<EndCrystal> allCrystals = this.checkRespawnCrystals(portalPos.above(1));
+        if (allCrystals.size() != 4) return;
+
+        BetterEndIslandCommon.LOGGER.info("Found all crystals, starting initial dragon spawn.");
+        this.respawnDragon(allCrystals);
+    }
+
+    @Unique
+    private List<EndCrystal> checkRespawnCrystals(BlockPos centerPos) {
+        List<EndCrystal> foundCrystals = Lists.newArrayList();
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
-            AABB crystalCheckbox = new AABB(blockPos.relative(direction, 7));
+            AABB crystalCheckbox = new AABB(centerPos.relative(direction, 7));
             List<EndCrystal> crystalsInDirection = this.level.getEntitiesOfClass(EndCrystal.class, crystalCheckbox);
-            if (crystalsInDirection.isEmpty()) {
-                return;
-            }
-
-            allCrystals.addAll(crystalsInDirection);
+            foundCrystals.addAll(crystalsInDirection);
         }
 
-        BetterEndIslandCommon.LOGGER.info("Found all crystals, respawning dragon.");
-        this.respawnDragon(allCrystals);
+        return foundCrystals;
     }
 
     @Inject(method = "respawnDragon", at = @At("HEAD"), cancellable = true)
     private void betterendisland_respawnDragon(List<EndCrystal> crystals, CallbackInfo ci) {
         if ((this.dragonKilled || !this.hasDragonEverSpawned) && this.dragonRespawnStage == null) {
-//            for(BlockPattern.BlockPatternMatch portalPatternMatch = this.findExitPortal(); portalPatternMatch != null; portalPatternMatch = this.findExitPortal()) {
-//                for(int x = 0; x < this.exitPortalPattern.getWidth(); ++x) {
-//                    for(int y = 0; y < this.exitPortalPattern.getHeight(); ++y) {
-//                        for(int z = 0; z < this.exitPortalPattern.getDepth(); ++z) {
-//                            BlockInWorld patternBlock = portalPatternMatch.getBlock(x, y, z);
-//                            if (patternBlock.getState().is(Blocks.BEDROCK) || patternBlock.getState().is(Blocks.END_PORTAL)) {
-//                                this.level.setBlockAndUpdate(patternBlock.getPos(), Blocks.END_STONE.defaultBlockState());
-//                            }
-//                        }
-//                    }
-//                }p
-//            }
-
             this.dragonRespawnStage = DragonRespawnStage.START;
             this.respawnTime = 0;
             this.respawnCrystals = crystals;
         }
         ci.cancel();
     }
-
-//    @Inject(method = "spawnExitPortal", at = @At("HEAD"), cancellable = true)
-//    private void betterendisland_spawnExitPortal(boolean isActive, CallbackInfo ci) {
-//        // Find the portal location if it hasn't been found yet
-//        if (this.portalLocation == null) {
-//            this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.END_PODIUM_LOCATION).below();
-//            while (this.level.getBlockState(this.portalLocation).is(Blocks.BEDROCK) && this.portalLocation.getY() > this.level.getSeaLevel()) {
-//                this.portalLocation = this.portalLocation.below();
-//            }
-//        }
-//
-//        BetterEndIslandCommon.LOGGER.info("Set the exit portal location to: {}", this.portalLocation);
-//
-//        BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(this.firstExitPortalSpawn, !this.firstExitPortalSpawn);
-////        BlockPos spawnPos = this.firstExitPortalSpawn ? this.portalLocation.below(5) : this.portalLocation;
-//        BlockPos spawnPos = this.portalLocation.below(5);
-//        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
-//        this.firstExitPortalSpawn = false;
-//        ci.cancel();
-//    }
 
     @Unique
     private void spawnPortal(boolean isActive, boolean isBottomOnly) {

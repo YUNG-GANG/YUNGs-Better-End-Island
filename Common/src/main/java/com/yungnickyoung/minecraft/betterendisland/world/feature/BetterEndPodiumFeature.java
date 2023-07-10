@@ -56,8 +56,8 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         RandomSource randomSource = ctx.random();
         BlockPos pos = ctx.origin();
         ResourceLocation template = chooseTemplate();
-        Rotation rotation = Rotation.getRandom(randomSource);
-        return placeTemplate(level, randomSource, pos, rotation, template);
+//        Rotation rotation = Rotation.getRandom(randomSource);
+        return placeTemplate(level, randomSource, pos, Rotation.NONE, template);
     }
 
     private ResourceLocation chooseTemplate() {
