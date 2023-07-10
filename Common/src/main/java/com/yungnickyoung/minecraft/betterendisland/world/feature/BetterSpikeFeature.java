@@ -48,6 +48,10 @@ public class BetterSpikeFeature {
                     new BlockStateRandomizer(Blocks.AIR.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.2f)
                             .addBlock(Blocks.OBSIDIAN.defaultBlockState(), 0.05f),
+                    false, false, false, false),
+            new BlockReplaceProcessor(
+                    Blocks.PURPLE_CONCRETE.defaultBlockState(),
+                    new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState()),
                     false, false, false, false)
     );
 
@@ -117,6 +121,7 @@ public class BetterSpikeFeature {
         BlockPos cornerPos = centerPos.offset(-template.getSize().getX() / 2, 0, -template.getSize().getZ() / 2);
         StructurePlaceSettings structurePlaceSettings = new StructurePlaceSettings();
         PROCESSORS.forEach(structurePlaceSettings::addProcessor);
+        // TODO - processor converting obsidian to crying obsidian
         structurePlaceSettings.setRotation(rotation);
         structurePlaceSettings.setRotationPivot(new BlockPos(9, 0, 9));
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
