@@ -4,7 +4,6 @@ import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
 import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -22,7 +21,6 @@ import java.util.Optional;
 
 /**
  * A replacement of vanilla's EndPodiumFeature that uses a customized structure template.
- * Injected via {@link com.yungnickyoung.minecraft.betterendisland.mixin.EndPodiumFeatureMixin}.
  */
 public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
     private static final List<StructureProcessor> PROCESSORS = List.of(
@@ -32,25 +30,41 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
                     false, false, false, false)
     );
 
-    private final boolean isInitialSpawn;
+    private static final StructureProcessor ACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
+            Blocks.RED_CONCRETE.defaultBlockState(),
+            new BlockStateRandomizer(Blocks.END_PORTAL.defaultBlockState()),
+            false, false, false, false);
 
-    public BetterEndPodiumFeature(boolean isInitialSpawn) {
+    private static final StructureProcessor INACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
+            Blocks.RED_CONCRETE.defaultBlockState(),
+            new BlockStateRandomizer(Blocks.AIR.defaultBlockState()),
+            false, false, false, false);
+
+    private final boolean isInitialSpawn;
+    private final boolean isBottomOnly;
+    private final boolean isActive;
+
+    public BetterEndPodiumFeature(boolean isInitialSpawn, boolean isBottomOnly, boolean isActive) {
         super(NoneFeatureConfiguration.CODEC);
         this.isInitialSpawn = isInitialSpawn;
+        this.isBottomOnly = isBottomOnly;
+        this.isActive = isActive;
     }
 
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
         ServerLevelAccessor level = ctx.level();
         RandomSource randomSource = ctx.random();
         BlockPos pos = ctx.origin();
-        ResourceLocation template = chooseTemplate(randomSource, isInitialSpawn);
+        ResourceLocation template = chooseTemplate();
         Rotation rotation = Rotation.getRandom(randomSource);
-        level.setBlock(pos.relative(Direction.NORTH, 16).relative(Direction.UP, 10), Blocks.DIAMOND_BLOCK.defaultBlockState(), 3);
         return placeTemplate(level, randomSource, pos, rotation, template);
     }
 
-    private ResourceLocation chooseTemplate(RandomSource randomSource, boolean isInitialSpawn) {
-        String towerType = "initial"; // TODO - add more tower types
+    private ResourceLocation chooseTemplate() {
+        if (this.isBottomOnly) {
+            return new ResourceLocation(BetterEndIslandCommon.MOD_ID, "tower_bottom_open");
+        }
+        String towerType = this.isInitialSpawn ? "initial" : "broken"; // TODO - add more tower types?
         String towerName = "tower_" + towerType;
         return new ResourceLocation(BetterEndIslandCommon.MOD_ID, towerName);
     }
@@ -67,8 +81,13 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         BlockPos cornerPos = centerPos.offset(-template.getSize().getX() / 2, 0, -template.getSize().getZ() / 2);
         StructurePlaceSettings structurePlaceSettings = new StructurePlaceSettings();
         PROCESSORS.forEach(structurePlaceSettings::addProcessor);
+        if (this.isActive) {
+            structurePlaceSettings.addProcessor(ACTIVE_PORTAL_PROCESSOR);
+        } else {
+            structurePlaceSettings.addProcessor(INACTIVE_PORTAL_PROCESSOR);
+        }
         structurePlaceSettings.setRotation(rotation);
-        structurePlaceSettings.setRotationPivot(new BlockPos(14, 0, 14));
+        structurePlaceSettings.setRotationPivot(this.isBottomOnly ? new BlockPos(3, 0, 3) : new BlockPos(14, 0, 14));
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
         return true;
     }
