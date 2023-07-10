@@ -43,7 +43,7 @@ public abstract class ServerLevelMixin extends Level {
                 && this.levelData.getGameTime() % 5 == 0)
         {
             double minDistance = -1.0D;
-            double requiredDistance = 40.0D;
+            double requiredDistance = 25.0D;
             Player foundPlayer = null;
 
             for (Player player : this.players()) {

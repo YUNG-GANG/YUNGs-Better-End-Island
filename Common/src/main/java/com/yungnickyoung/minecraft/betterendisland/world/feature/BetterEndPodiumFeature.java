@@ -4,8 +4,11 @@ import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
 import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
@@ -55,9 +58,23 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         ServerLevelAccessor level = ctx.level();
         RandomSource randomSource = ctx.random();
         BlockPos pos = ctx.origin();
+
+        // Choose and place template
         ResourceLocation template = chooseTemplate();
-//        Rotation rotation = Rotation.getRandom(randomSource);
-        return placeTemplate(level, randomSource, pos, Rotation.NONE, template);
+        boolean placed = placeTemplate(level, randomSource, pos, Rotation.NONE, template);
+
+        // Place crystals on initial spawn
+        if (this.isInitialSpawn) {
+            BlockPos centerPos = pos.above(6);
+            for (Direction direction : Direction.Plane.HORIZONTAL) {
+                BlockPos crystalPos = centerPos.relative(direction, 8);
+                EndCrystal crystal = new EndCrystal((Level) level, crystalPos.getX() + 0.5D, crystalPos.getY(), crystalPos.getZ() + 0.5D);
+                crystal.setShowBottom(false);
+                level.addFreshEntity(crystal);
+            }
+        }
+
+        return placed;
     }
 
     private ResourceLocation chooseTemplate() {
