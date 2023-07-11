@@ -72,6 +72,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Unique private DragonRespawnStage dragonRespawnStage;
     @Unique private boolean firstExitPortalSpawn = true;
     @Unique private boolean hasDragonEverSpawned;
+    @Unique private int numberTimesDragonKilled = 0;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void betterendisland_EndDragonFight(ServerLevel level, long seed, CompoundTag tag, CallbackInfo ci) {
@@ -88,6 +89,11 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         } else {
             this.hasDragonEverSpawned = false;
         }
+        if (tag.contains("NumberTimesDragonKilled")) {
+            this.numberTimesDragonKilled = tag.getInt("NumberTimesDragonKilled");
+        } else {
+            this.numberTimesDragonKilled = 0;
+        }
         this.dragonEvent.setVisible(false);
     }
 
@@ -95,6 +101,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     public void betterendisland_saveData(CallbackInfoReturnable<CompoundTag> cir) {
         cir.getReturnValue().putBoolean("FirstExitPortalSpawn", this.firstExitPortalSpawn);
         cir.getReturnValue().putBoolean("HasDragonEverSpawned", this.hasDragonEverSpawned);
+        cir.getReturnValue().putInt("NumberTimesDragonKilled", this.numberTimesDragonKilled);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
@@ -328,6 +335,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             }
             this.previouslyKilled = true;
             this.dragonKilled = true;
+            this.numberTimesDragonKilled++;
         }
         ci.cancel();
     }
@@ -372,5 +380,10 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Override
     public boolean hasDragonEverSpawned() {
         return this.hasDragonEverSpawned;
+    }
+
+    @Override
+    public int getNumberTimesDragonKilled() {
+        return this.numberTimesDragonKilled;
     }
 }

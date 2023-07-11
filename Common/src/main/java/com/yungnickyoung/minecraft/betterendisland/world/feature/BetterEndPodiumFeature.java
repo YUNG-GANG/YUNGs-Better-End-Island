@@ -1,11 +1,14 @@
 package com.yungnickyoung.minecraft.betterendisland.world.feature;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
+import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
+import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.Level;
@@ -59,9 +62,14 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         RandomSource randomSource = ctx.random();
         BlockPos pos = ctx.origin();
 
+        int numberTimesDragonKilled = 0;
+        if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).getNumberTimesDragonKilled();
+        }
+
         // Choose and place template
         ResourceLocation template = chooseTemplate();
-        boolean placed = placeTemplate(level, randomSource, pos, Rotation.NONE, template);
+        boolean placed = placeTemplate(level, randomSource, pos, Rotation.NONE, template, numberTimesDragonKilled);
 
         // Place crystals on initial spawn
         if (this.isInitialSpawn) {
@@ -81,12 +89,12 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         if (this.isBottomOnly) {
             return new ResourceLocation(BetterEndIslandCommon.MOD_ID, "tower_bottom_open");
         }
-        String towerType = this.isInitialSpawn ? "initial" : "broken"; // TODO - add more tower types?
+        String towerType = this.isInitialSpawn ? "initial" : "broken";
         String towerName = "tower_" + towerType;
         return new ResourceLocation(BetterEndIslandCommon.MOD_ID, towerName);
     }
 
-    private boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id) {
+    private boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
@@ -103,6 +111,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         } else {
             structurePlaceSettings.addProcessor(INACTIVE_PORTAL_PROCESSOR);
         }
+        structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(rotation);
         structurePlaceSettings.setRotationPivot(this.isBottomOnly ? new BlockPos(3, 0, 3) : new BlockPos(14, 0, 14));
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);

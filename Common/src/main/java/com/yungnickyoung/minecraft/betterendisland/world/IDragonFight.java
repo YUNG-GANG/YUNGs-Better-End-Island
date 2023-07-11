@@ -5,4 +5,5 @@ public interface IDragonFight {
     DragonRespawnStage getDragonRespawnStage();
     boolean hasDragonEverSpawned();
     void initialRespawn();
+    int getNumberTimesDragonKilled();
 }

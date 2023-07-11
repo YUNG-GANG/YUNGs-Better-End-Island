@@ -4,12 +4,15 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
+import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import com.yungnickyoung.minecraft.betterendisland.world.SpikeCacheLoader;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
+import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -68,17 +71,22 @@ public class BetterSpikeFeature {
 
         Rotation rotation = Rotation.getRandom(randomSource);
 
+        int numberTimesDragonKilled = 0;
+        if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).getNumberTimesDragonKilled();
+        }
+
         // Place top part
         int topY = 60;
         BlockPos centerPos = new BlockPos(spike.getCenterX(), topY, spike.getCenterZ());
-        if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getFirst())) {
+        if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getFirst(), numberTimesDragonKilled)) {
             BetterEndIslandCommon.LOGGER.error("Unable to place top spike at {}. This shouldn't happen!", centerPos);
             return;
         }
 
         // Place bottom part
         centerPos = centerPos.below(67);
-        if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getSecond())) {
+        if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getSecond(), numberTimesDragonKilled)) {
             BetterEndIslandCommon.LOGGER.error("Unable to place bottom spike at {}. This shouldn't happen!", centerPos);
             return;
         }
@@ -109,7 +117,7 @@ public class BetterSpikeFeature {
         return new Pair<>(new ResourceLocation(BetterEndIslandCommon.MOD_ID, topName), new ResourceLocation(BetterEndIslandCommon.MOD_ID, bottomName));
     }
 
-    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id) {
+    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
@@ -121,7 +129,7 @@ public class BetterSpikeFeature {
         BlockPos cornerPos = centerPos.offset(-template.getSize().getX() / 2, 0, -template.getSize().getZ() / 2);
         StructurePlaceSettings structurePlaceSettings = new StructurePlaceSettings();
         PROCESSORS.forEach(structurePlaceSettings::addProcessor);
-        // TODO - processor converting obsidian to crying obsidian
+        structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(rotation);
         structurePlaceSettings.setRotationPivot(new BlockPos(9, 0, 9));
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
