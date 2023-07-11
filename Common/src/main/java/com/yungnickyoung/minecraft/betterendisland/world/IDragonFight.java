@@ -6,4 +6,5 @@ public interface IDragonFight {
     boolean hasDragonEverSpawned();
     void initialRespawn();
     int getNumberTimesDragonKilled();
+    void tickBellSound();
 }

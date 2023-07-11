@@ -36,6 +36,19 @@ public abstract class ServerLevelMixin extends Level {
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void betterendisland_tickInitialDragonSummonTrigger(BooleanSupplier booleanSupplier, CallbackInfo ci) {
+        tickSummonDragonFight();
+        tickBellSound();
+    }
+
+    @Unique
+    private void tickBellSound() {
+        if (this.dimension().location().equals(END_DIMENSION) && this.dragonFight() != null) {
+            ((IDragonFight) this.dragonFight()).tickBellSound();
+        }
+    }
+
+    @Unique
+    private void tickSummonDragonFight() {
         if (this.dimension().location().equals(END_DIMENSION)
                 && this.dragonFight() != null
                 && !((IDragonFight) this.dragonFight()).hasDragonEverSpawned()

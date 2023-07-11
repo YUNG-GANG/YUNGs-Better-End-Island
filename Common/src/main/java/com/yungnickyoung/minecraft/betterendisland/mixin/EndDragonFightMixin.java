@@ -13,6 +13,8 @@ import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
@@ -368,6 +370,27 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 this.hasDragonEverSpawned = true;
             } else {
                 this.dragonRespawnStage = stage;
+            }
+        }
+    }
+
+    @Override
+    public void tickBellSound() {
+        if (!this.hasDragonEverSpawned || this.dragonRespawnStage != null) {
+            long gameTime = this.level.getGameTime();
+            int soundY = this.portalLocation == null ? 80 : this.portalLocation.getY() + 15;
+
+            if (gameTime % 100 == 0) {
+                // Play bell sound every 4 seconds
+                this.level.playSound(null, new BlockPos(0, soundY, 0), SoundEvents.BELL_BLOCK, SoundSource.NEUTRAL, 24.0f, 0.5f);
+
+                // When close to center, play a higher pitch resonance sound
+                this.level.playSound(null, new BlockPos(0, soundY, 0), SoundEvents.BELL_RESONATE, SoundSource.NEUTRAL, 4.0f, 0.9f);
+            }
+
+            // Play low pitch resonance sound every 3 bell rings
+            if (gameTime % 300 == 0) {
+                this.level.playSound(null, new BlockPos(0, 80, 0), SoundEvents.BELL_RESONATE, SoundSource.NEUTRAL, 24.0f, 0.8f);
             }
         }
     }
