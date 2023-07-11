@@ -69,7 +69,11 @@ public class BetterSpikeFeature {
         // First template ID is the top part, second is the bottom part.
         Pair<ResourceLocation, ResourceLocation> templates = chooseTemplates(spike, isInitialSpawn, randomSource.nextFloat() < 0.2f);
 
-        Rotation rotation = Rotation.getRandom(randomSource);
+        // Use different random to ensure rotation for a given spike is same every fight
+        long seed = 0;
+        if (level instanceof WorldGenLevel) seed = ((WorldGenLevel) level).getSeed();
+        RandomSource rand = RandomSource.create(seed ^ spike.getCenterX() ^ spike.getCenterZ());
+        Rotation rotation = Rotation.getRandom(rand);
 
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
