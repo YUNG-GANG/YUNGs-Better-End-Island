@@ -60,7 +60,7 @@ public abstract class ServerLevelMixin extends Level {
             Player foundPlayer = null;
 
             for (Player player : this.players()) {
-                if (EntitySelector.NO_CREATIVE_OR_SPECTATOR.test(player)) {
+                if (EntitySelector.NO_SPECTATORS.test(player)) {
                     double distance = xzDistanceSqr(0, 0, player.position().x(), player.position().z()); // (0, 0) is the center of the island
                     if (distance < requiredDistance * requiredDistance && (minDistance == -1.0D || distance < minDistance)) {
                         minDistance = distance;
