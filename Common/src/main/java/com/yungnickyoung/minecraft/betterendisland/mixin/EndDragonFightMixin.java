@@ -8,6 +8,7 @@ import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndPodium
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
@@ -360,7 +361,12 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 // Place broken tower w/ explosion effects
                 this.spawnPortal(false, false);
                 level.explode(null, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
-
+                level.players().forEach(player -> {
+                    level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+                    if (player.distanceToSqr(this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ()) > 32) {
+                        level.playSound(null, this.portalLocation.above(20), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
+                    }
+                });
                 // Place open, inactive bottom if we're not transitioning from an initial tower
                 if (this.hasDragonEverSpawned) {
                     this.spawnPortal(false, true);

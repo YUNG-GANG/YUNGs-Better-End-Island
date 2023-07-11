@@ -2,7 +2,10 @@ package com.yungnickyoung.minecraft.betterendisland.world;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -55,6 +58,15 @@ public enum DragonRespawnStage implements StringRepresentable {
                         }
                     } else {
                         level.explode(null, (float) spike.getCenterX() + 0.5F, spike.getHeight(), (float) spike.getCenterZ() + 0.5F, 5.0F, Explosion.BlockInteraction.DESTROY);
+                        level.players().forEach(player -> {
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, spike.getHeight(), (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, spike.getHeight(), (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, spike.getHeight(), (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, spike.getHeight(), (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            if (player.distanceToSqr(spike.getCenterX(), spike.getHeight(), spike.getCenterZ()) > 32) {
+                                level.playSound(null, new BlockPos(spike.getCenterX(), spike.getHeight(), spike.getCenterZ()), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
+                            }
+                        });
 
                         int resetRadius = 10;
                         for (BlockPos blockPos : net.minecraft.core.BlockPos.betweenClosed(
