@@ -44,13 +44,13 @@ public class BetterSpikeFeature {
             new BlockReplaceProcessor(
                     Blocks.ORANGE_TERRACOTTA.defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState())
-                            .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.5f),
+                            .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.3f),
                     false, false, false, false),
             new BlockReplaceProcessor(
                     Blocks.MAGENTA_TERRACOTTA.defaultBlockState(),
                     new BlockStateRandomizer(Blocks.AIR.defaultBlockState())
-                            .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.2f)
-                            .addBlock(Blocks.OBSIDIAN.defaultBlockState(), 0.05f),
+                            .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.1f)
+                            .addBlock(Blocks.OBSIDIAN.defaultBlockState(), 0.1f),
                     false, false, false, false),
             new BlockReplaceProcessor(
                     Blocks.PURPLE_CONCRETE.defaultBlockState(),
