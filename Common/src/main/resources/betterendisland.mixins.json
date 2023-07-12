@@ -5,9 +5,11 @@
   "refmap": "betterendisland.refmap.json",
   "mixins": [
     "EndDragonFightMixin",
+    "EndGatewayFeatureMixin",
     "EndSpikeMixin",
     "ServerLevelMixin",
-    "SpikeFeatureMixin"
+    "SpikeFeatureMixin",
+    "TheEndGatewayBlockEntityMixin"
   ],
   "injectors": {
     "defaultRequire": 1
