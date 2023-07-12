@@ -7,4 +7,5 @@ public interface IDragonFight {
     void initialRespawn();
     int getNumberTimesDragonKilled();
     void tickBellSound();
+    void reset();
 }

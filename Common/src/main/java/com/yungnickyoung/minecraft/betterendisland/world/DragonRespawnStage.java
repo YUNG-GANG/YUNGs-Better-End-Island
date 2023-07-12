@@ -68,10 +68,10 @@ public enum DragonRespawnStage implements StringRepresentable {
                             }
                         });
 
-                        int resetRadius = 10;
+                        int resetRadius = 11;
                         for (BlockPos blockPos : net.minecraft.core.BlockPos.betweenClosed(
                                 new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 10, spike.getCenterZ() - resetRadius),
-                                new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 25, spike.getCenterZ() + resetRadius))) {
+                                new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 30, spike.getCenterZ() + resetRadius))) {
                             level.removeBlock(blockPos, false);
                         }
 

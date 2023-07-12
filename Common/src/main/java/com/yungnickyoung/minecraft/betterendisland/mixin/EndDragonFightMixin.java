@@ -1,10 +1,17 @@
 package com.yungnickyoung.minecraft.betterendisland.mixin;
 
+import com.google.common.collect.ContiguousSet;
+import com.google.common.collect.DiscreteDomain;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Range;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.DragonRespawnStage;
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndPodiumFeature;
+import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterSpikeFeature;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -16,6 +23,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
@@ -26,11 +34,13 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
+import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -72,6 +82,9 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Shadow private int ticksSinceCrystalsScanned;
     @Shadow private boolean previouslyKilled;
 
+    @Shadow private int crystalsAlive;
+    @Shadow @Nullable private DragonRespawnAnimation respawnStage;
+    @Shadow @Final private ObjectArrayList<Integer> gateways;
     @Unique private DragonRespawnStage dragonRespawnStage;
     @Unique private boolean firstExitPortalSpawn = true;
     @Unique private boolean hasDragonEverSpawned;
@@ -151,6 +164,93 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             this.level.getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(0, 0), 9, Unit.INSTANCE);
         }
         ci.cancel();
+    }
+
+    @Override
+    public void reset() {
+        // Kill dragon if exists
+        List<? extends EnderDragon> dragons = this.level.getDragons();
+        dragons.forEach(EnderDragon::discard);
+        this.dragonEvent.setProgress(0);
+        this.dragonEvent.setVisible(false);
+
+        // Get portal pos
+        if (this.portalLocation == null) {
+            BetterEndIslandCommon.LOGGER.info("Tried to reset, but need to find the portal first.");
+            this.findExitPortal();
+            if (this.portalLocation == null) { // If still null after finding portal, we find it ourselves
+                this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.END_PODIUM_LOCATION).below();
+                while (this.level.getBlockState(this.portalLocation).is(Blocks.BEDROCK) && this.portalLocation.getY() > this.level.getSeaLevel()) {
+                    this.portalLocation = this.portalLocation.below();
+                }
+            }
+        }
+        BlockPos portalPos = this.portalLocation;
+
+        // Reset vars to initial state
+        this.dragonUUID = null;
+        this.dragonKilled = false;
+        this.previouslyKilled = false;
+        this.firstExitPortalSpawn = true;
+        this.hasDragonEverSpawned = false;
+        this.numberTimesDragonKilled = 0;
+        this.dragonRespawnStage = null;
+        this.respawnStage = null;
+        this.respawnTime = 0;
+        this.needsStateScanning = true;
+        this.ticksSinceLastPlayerScan = 0;
+        this.ticksSinceDragonSeen = 0;
+        this.crystalsAlive = 0;
+        this.ticksSinceCrystalsScanned = 0;
+
+        // Get rid of summoning crystals
+        if (this.respawnCrystals != null) {
+            this.respawnCrystals.forEach(EndCrystal::discard);
+        }
+        this.respawnCrystals = null;
+        List<EndCrystal> remainingSummoningCrystals = checkRespawnCrystals(portalPos.above(1));
+        remainingSummoningCrystals.forEach(EndCrystal::discard);
+
+        // Get rid of spike crystals
+        List<SpikeFeature.EndSpike> allSpikes = SpikeFeature.getSpikesForLevel(level);
+        for (SpikeFeature.EndSpike spike : allSpikes) {
+            for (EndCrystal crystal : this.level.getEntitiesOfClass(EndCrystal.class, spike.getTopBoundingBox())) {
+                crystal.discard();
+            }
+        }
+
+        // Reset tower to initial state w/ summoning crystals
+        BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(true, false, false);
+        BlockPos spawnPos = portalPos.below(5);
+        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+
+        // Reset spikes to initial state
+        allSpikes.forEach(spike -> {
+            int resetRadius = 11;
+            BlockPos.betweenClosed(
+                        new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 10, spike.getCenterZ() - resetRadius),
+                        new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 30, spike.getCenterZ() + resetRadius))
+                    .forEach(blockPos -> level.removeBlock(blockPos, false));
+
+            // Place new spike
+            SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), null);
+            BetterSpikeFeature.placeSpike(level, RandomSource.create(), spikeConfig, spike, true);
+        });
+
+        // Remove all gateways
+        for (int i = 0; i < 20; i++) {
+            int x = Mth.floor(96.0D * Math.cos(2.0D * (-Math.PI + 0.15707963267948966D * (double) i)));
+            int z = Mth.floor(96.0D * Math.sin(2.0D * (-Math.PI + 0.15707963267948966D * (double) i)));
+            BlockPos gatePos = new BlockPos(x, 75, z);
+            BlockPos.betweenClosed(gatePos.offset(-1, -4, -1), gatePos.offset(1, 4, 1)).forEach(pos -> {
+                this.level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            });
+        }
+
+        // Reset gateways var
+        this.gateways.clear();
+        this.gateways.addAll(ContiguousSet.create(Range.closedOpen(0, 20), DiscreteDomain.integers()));
+        Util.shuffle(this.gateways, RandomSource.create(this.level.getSeed()));
     }
 
     @Unique
