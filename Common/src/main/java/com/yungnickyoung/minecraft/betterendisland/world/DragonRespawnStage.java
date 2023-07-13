@@ -54,7 +54,7 @@ public enum DragonRespawnStage implements StringRepresentable {
                     int pillarHeight = (spike.getHeight() - 73) / 3;
                     if (pillarHeight == 10) pillarHeight = 9; // We don't have a 10th variant
                     ((IEndSpike) spike).setCrystalYOffsetFromPillarHeight(pillarHeight);
-                    int crystalY = 60 + ((IEndSpike)spike).getCrystalYOffset(); // Uses hardcoded topY of 60; should be same as value in BetterSpikeFeature
+                    int crystalY = 60 + ((IEndSpike)spike).getCrystalYOffset() - 1; // Uses hardcoded topY of 60; should be same as value in BetterSpikeFeature
 
                     if (isFirstTickForSpike) {
                         // On first tick for summoning a spike, set beam target for all crystals to point at the spike
