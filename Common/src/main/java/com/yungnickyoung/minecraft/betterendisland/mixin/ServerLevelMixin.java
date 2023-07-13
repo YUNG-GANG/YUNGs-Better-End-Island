@@ -71,7 +71,6 @@ public abstract class ServerLevelMixin extends Level {
 
             // Non-null foundPlayer means we found a player in range to trigger summoning the dragon
             if (foundPlayer != null) {
-                BetterEndIslandCommon.LOGGER.info("Found player in range to summon dragon: {}", foundPlayer.getName().getString());
                 ((IDragonFight) this.dragonFight()).initialRespawn();
             }
         }

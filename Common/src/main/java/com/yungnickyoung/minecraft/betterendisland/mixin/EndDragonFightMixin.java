@@ -210,6 +210,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         this.respawnCrystals = null;
         List<EndCrystal> remainingSummoningCrystals = checkRespawnCrystals(portalPos.above(1));
         remainingSummoningCrystals.forEach(EndCrystal::discard);
+        remainingSummoningCrystals = checkVanillaRespawnCrystals(portalPos.below(2));
+        remainingSummoningCrystals.forEach(EndCrystal::discard);
 
         // Get rid of spike crystals
         List<SpikeFeature.EndSpike> allSpikes = SpikeFeature.getSpikesForLevel(level);
@@ -325,7 +327,12 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
             // Check for all 4 summoning crystals
             List<EndCrystal> allCrystals = this.checkRespawnCrystals(portalPos.above(1));
-            if (allCrystals.size() != 4) return;
+            if (allCrystals.size() != 4) {
+                allCrystals = this.checkVanillaRespawnCrystals(portalPos.below(2));
+                if (allCrystals.size() != 4) {
+                    return;
+                }
+            }
 
             BetterEndIslandCommon.LOGGER.info("Found all crystals, respawning dragon.");
             this.respawnDragon(allCrystals);
@@ -339,6 +346,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Unique
     @Override
     public void initialRespawn() {
+        BetterEndIslandCommon.LOGGER.info("Starting initial dragon fight!");
+
         BlockPos portalPos = this.portalLocation;
         if (portalPos == null) {
             BetterEndIslandCommon.LOGGER.info("Tried to respawn, but need to find the portal first.");
@@ -356,7 +365,12 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
         // Check for all 4 summoning crystals
         List<EndCrystal> allCrystals = this.checkRespawnCrystals(portalPos.above(1));
-        if (allCrystals.size() != 4) return;
+        if (allCrystals.size() != 4) {
+            allCrystals = this.checkVanillaRespawnCrystals(portalPos.below(2));
+            if (allCrystals.size() != 4) {
+                return;
+            }
+        }
 
         BetterEndIslandCommon.LOGGER.info("Found all crystals, starting initial dragon spawn.");
         this.respawnDragon(allCrystals);
@@ -368,6 +382,19 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
             AABB crystalCheckbox = new AABB(centerPos.relative(direction, 7));
+            List<EndCrystal> crystalsInDirection = this.level.getEntitiesOfClass(EndCrystal.class, crystalCheckbox);
+            foundCrystals.addAll(crystalsInDirection);
+        }
+
+        return foundCrystals;
+    }
+
+    @Unique
+    private List<EndCrystal> checkVanillaRespawnCrystals(BlockPos centerPos) {
+        List<EndCrystal> foundCrystals = Lists.newArrayList();
+
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            AABB crystalCheckbox = new AABB(centerPos.relative(direction, 2));
             List<EndCrystal> crystalsInDirection = this.level.getEntitiesOfClass(EndCrystal.class, crystalCheckbox);
             foundCrystals.addAll(crystalsInDirection);
         }
