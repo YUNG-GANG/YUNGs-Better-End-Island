@@ -51,20 +51,25 @@ public enum DragonRespawnStage implements StringRepresentable {
                 int spikeIndex = phaseTimer / ticksPerSpike;
                 if (spikeIndex < allSpikes.size()) {
                     SpikeFeature.EndSpike spike = allSpikes.get(spikeIndex);
+                    int pillarHeight = (spike.getHeight() - 73) / 3;
+                    if (pillarHeight == 10) pillarHeight = 9; // We don't have a 10th variant
+                    ((IEndSpike) spike).setCrystalYOffsetFromPillarHeight(pillarHeight);
+                    int crystalY = 60 + ((IEndSpike)spike).getCrystalYOffset(); // Uses hardcoded topY of 60; should be same as value in BetterSpikeFeature
+
                     if (isFirstTickForSpike) {
                         // On first tick for summoning a spike, set beam target for all crystals to point at the spike
                         for (EndCrystal crystal : summoningCrystals) {
-                            crystal.setBeamTarget(new BlockPos(spike.getCenterX(), spike.getHeight() + 1, spike.getCenterZ()));
+                            crystal.setBeamTarget(new BlockPos(spike.getCenterX(), crystalY, spike.getCenterZ()));
                         }
                     } else {
-                        level.explode(null, (float) spike.getCenterX() + 0.5F, spike.getHeight(), (float) spike.getCenterZ() + 0.5F, 5.0F, Explosion.BlockInteraction.DESTROY);
+                        level.explode(null, (float) spike.getCenterX() + 0.5F, crystalY, (float) spike.getCenterZ() + 0.5F, 5.0F, Explosion.BlockInteraction.DESTROY);
                         level.players().forEach(player -> {
-                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, spike.getHeight(), (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, spike.getHeight(), (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, spike.getHeight(), (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, spike.getHeight(), (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            if (player.distanceToSqr(spike.getCenterX(), spike.getHeight(), spike.getCenterZ()) > 32) {
-                                level.playSound(null, new BlockPos(spike.getCenterX(), spike.getHeight(), spike.getCenterZ()), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, crystalY, (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, crystalY, (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, crystalY, (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, crystalY, (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            if (player.distanceToSqr(spike.getCenterX(), crystalY, spike.getCenterZ()) > 32) {
+                                level.playSound(null, new BlockPos(spike.getCenterX(), crystalY, spike.getCenterZ()), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
                             }
                         });
 
