@@ -191,7 +191,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         this.dragonUUID = null;
         this.dragonKilled = false;
         this.previouslyKilled = false;
-        this.firstExitPortalSpawn = true;
+        this.firstExitPortalSpawn = false;
         this.hasDragonEverSpawned = false;
         this.numberTimesDragonKilled = 0;
         this.dragonRespawnStage = null;
@@ -434,7 +434,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
             this.spawnNewGateway();
             if (!this.previouslyKilled) {
-                this.level.setBlockAndUpdate(this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, EndPodiumFeature.END_PODIUM_LOCATION), Blocks.DRAGON_EGG.defaultBlockState());
+                this.level.setBlockAndUpdate(this.portalLocation.above(), Blocks.DRAGON_EGG.defaultBlockState());
             }
             this.previouslyKilled = true;
             this.dragonKilled = true;
