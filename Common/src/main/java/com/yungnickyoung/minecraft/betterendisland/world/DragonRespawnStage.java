@@ -24,7 +24,7 @@ public enum DragonRespawnStage implements StringRepresentable {
             // Singular tick - update beam target pos for all crystals
             BlockPos beamTargetPos = new BlockPos(0, 128, 0);
             summoningCrystals.forEach(crystal -> crystal.setBeamTarget(beamTargetPos));
-            ((IDragonFight) dragonFight).setDragonRespawnStage(PREPARING_TO_SUMMON_PILLARS);
+            ((IDragonFight) dragonFight).betterendisland$setDragonRespawnStage(PREPARING_TO_SUMMON_PILLARS);
         }
     },
     PREPARING_TO_SUMMON_PILLARS("preparing_to_summon_pillars") {
@@ -36,7 +36,7 @@ public enum DragonRespawnStage implements StringRepresentable {
                     broadcastDragonGrowlSound(level);
                 }
             } else {
-                ((IDragonFight) dragonFight).setDragonRespawnStage(SUMMONING_PILLARS);
+                ((IDragonFight) dragonFight).betterendisland$setDragonRespawnStage(SUMMONING_PILLARS);
             }
         }
     },
@@ -85,7 +85,7 @@ public enum DragonRespawnStage implements StringRepresentable {
                         Feature.END_SPIKE.place(spikeConfig, level, level.getChunkSource().getGenerator(), RandomSource.create(), new BlockPos(spike.getCenterX(), 45, spike.getCenterZ()));
                     }
                 } else if (isFirstTickForSpike) {
-                    ((IDragonFight) dragonFight).setDragonRespawnStage(SUMMONING_DRAGON);
+                    ((IDragonFight) dragonFight).betterendisland$setDragonRespawnStage(SUMMONING_DRAGON);
                 }
             }
 
@@ -95,7 +95,7 @@ public enum DragonRespawnStage implements StringRepresentable {
         public void tick(ServerLevel level, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer, BlockPos portalPos) {
             int totalPhaseTime = 100;
             if (phaseTimer >= totalPhaseTime) {
-                ((IDragonFight) dragonFight).setDragonRespawnStage(END);
+                ((IDragonFight) dragonFight).betterendisland$setDragonRespawnStage(END);
                 dragonFight.resetSpikeCrystals();
 
                 for (EndCrystal crystal : summoningCrystals) {

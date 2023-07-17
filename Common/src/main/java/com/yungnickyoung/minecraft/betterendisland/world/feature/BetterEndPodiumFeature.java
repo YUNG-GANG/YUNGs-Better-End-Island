@@ -64,7 +64,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
 
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).getNumberTimesDragonKilled();
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).betterendisland$getNumberTimesDragonKilled();
         }
 
         // Choose and place template

@@ -1,6 +1,5 @@
 package com.yungnickyoung.minecraft.betterendisland.mixin;
 
-import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
@@ -43,7 +42,7 @@ public abstract class ServerLevelMixin extends Level {
     @Unique
     private void tickBellSound() {
         if (this.dimension().location().equals(END_DIMENSION) && this.dragonFight() != null) {
-            ((IDragonFight) this.dragonFight()).tickBellSound();
+            ((IDragonFight) this.dragonFight()).betterendisland$tickBellSound();
         }
     }
 
@@ -51,8 +50,8 @@ public abstract class ServerLevelMixin extends Level {
     private void tickSummonDragonFight() {
         if (this.dimension().location().equals(END_DIMENSION)
                 && this.dragonFight() != null
-                && !((IDragonFight) this.dragonFight()).hasDragonEverSpawned()
-                && ((IDragonFight) this.dragonFight()).getDragonRespawnStage() == null
+                && !((IDragonFight) this.dragonFight()).betterendisland$hasDragonEverSpawned()
+                && ((IDragonFight) this.dragonFight()).betterendisland$getDragonRespawnStage() == null
                 && this.levelData.getGameTime() % 5 == 0)
         {
             double minDistance = -1.0D;
@@ -71,7 +70,7 @@ public abstract class ServerLevelMixin extends Level {
 
             // Non-null foundPlayer means we found a player in range to trigger summoning the dragon
             if (foundPlayer != null) {
-                ((IDragonFight) this.dragonFight()).initialRespawn();
+                ((IDragonFight) this.dragonFight()).betterendisland$initialRespawn();
             }
         }
     }

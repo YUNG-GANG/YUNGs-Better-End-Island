@@ -1,11 +1,11 @@
 package com.yungnickyoung.minecraft.betterendisland.world;
 
 public interface IDragonFight {
-    void setDragonRespawnStage(DragonRespawnStage stage);
-    DragonRespawnStage getDragonRespawnStage();
-    boolean hasDragonEverSpawned();
-    void initialRespawn();
-    int getNumberTimesDragonKilled();
-    void tickBellSound();
-    void reset();
+    void betterendisland$setDragonRespawnStage(DragonRespawnStage stage);
+    DragonRespawnStage betterendisland$getDragonRespawnStage();
+    boolean betterendisland$hasDragonEverSpawned();
+    void betterendisland$initialRespawn();
+    int betterendisland$getNumberTimesDragonKilled();
+    void betterendisland$tickBellSound();
+    void betterendisland$reset();
 }

@@ -30,7 +30,7 @@ public class EndIslandCommand {
                 return -1;
             }
             IDragonFight dragonFight = (IDragonFight) serverLevel.dragonFight(); // Cast to custom interface
-            dragonFight.reset();
+            dragonFight.betterendisland$reset();
             commandSource.sendSuccess(Component.literal("Ender Dragon fight has been reset."), false);
             return 1;
         } else {

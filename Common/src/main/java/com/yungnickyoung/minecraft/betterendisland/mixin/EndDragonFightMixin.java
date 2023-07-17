@@ -85,44 +85,45 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Shadow private int crystalsAlive;
     @Shadow @Nullable private DragonRespawnAnimation respawnStage;
     @Shadow @Final private ObjectArrayList<Integer> gateways;
-    @Unique private DragonRespawnStage dragonRespawnStage;
-    @Unique private boolean firstExitPortalSpawn = true;
-    @Unique private boolean hasDragonEverSpawned;
-    @Unique private int numberTimesDragonKilled = 0;
+
+    @Unique private DragonRespawnStage betterendisland$dragonRespawnStage;
+    @Unique private boolean betterendisland$firstExitPortalSpawn = true;
+    @Unique private boolean betterendisland$hasDragonEverSpawned;
+    @Unique private int betterendisland$numberTimesDragonKilled = 0;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     public void betterendisland_EndDragonFight(ServerLevel level, long seed, CompoundTag tag, CallbackInfo ci) {
         if (tag.getBoolean("IsRespawning")) {
-            this.dragonRespawnStage = DragonRespawnStage.START;
+            this.betterendisland$dragonRespawnStage = DragonRespawnStage.START;
         }
         if (tag.contains("FirstExitPortalSpawn")) {
-            this.firstExitPortalSpawn = tag.getBoolean("FirstExitPortalSpawn");
+            this.betterendisland$firstExitPortalSpawn = tag.getBoolean("FirstExitPortalSpawn");
         } else {
-            this.firstExitPortalSpawn = true;
+            this.betterendisland$firstExitPortalSpawn = true;
         }
         if (tag.contains("HasDragonEverSpawned")) {
-            this.hasDragonEverSpawned = tag.getBoolean("HasDragonEverSpawned");
+            this.betterendisland$hasDragonEverSpawned = tag.getBoolean("HasDragonEverSpawned");
         } else {
-            this.hasDragonEverSpawned = false;
+            this.betterendisland$hasDragonEverSpawned = false;
         }
         if (tag.contains("NumberTimesDragonKilled")) {
-            this.numberTimesDragonKilled = tag.getInt("NumberTimesDragonKilled");
+            this.betterendisland$numberTimesDragonKilled = tag.getInt("NumberTimesDragonKilled");
         } else {
-            this.numberTimesDragonKilled = 0;
+            this.betterendisland$numberTimesDragonKilled = 0;
         }
         this.dragonEvent.setVisible(false);
     }
 
     @Inject(method = "saveData", at = @At("RETURN"))
     public void betterendisland_saveData(CallbackInfoReturnable<CompoundTag> cir) {
-        cir.getReturnValue().putBoolean("FirstExitPortalSpawn", this.firstExitPortalSpawn);
-        cir.getReturnValue().putBoolean("HasDragonEverSpawned", this.hasDragonEverSpawned);
-        cir.getReturnValue().putInt("NumberTimesDragonKilled", this.numberTimesDragonKilled);
+        cir.getReturnValue().putBoolean("FirstExitPortalSpawn", this.betterendisland$firstExitPortalSpawn);
+        cir.getReturnValue().putBoolean("HasDragonEverSpawned", this.betterendisland$hasDragonEverSpawned);
+        cir.getReturnValue().putInt("NumberTimesDragonKilled", this.betterendisland$numberTimesDragonKilled);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void betterendisland_tickFight(CallbackInfo ci) {
-        this.dragonEvent.setVisible(!this.dragonKilled && this.hasDragonEverSpawned);
+        this.dragonEvent.setVisible(!this.dragonKilled && this.betterendisland$hasDragonEverSpawned);
         if (++this.ticksSinceLastPlayerScan >= 20) {
             this.updatePlayers();
             this.ticksSinceLastPlayerScan = 0;
@@ -135,22 +136,22 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             // Initial state scanning.
             // Only performed once, when the dimension is first loaded.
             if (this.needsStateScanning && isArenaLoaded) {
-                this.scanForInitialState();
+                this.betterendisland$scanForInitialState();
                 this.needsStateScanning = false;
             }
 
             // Update respawn stage if performing respawn
-            if (this.dragonRespawnStage != null) {
+            if (this.betterendisland$dragonRespawnStage != null) {
                 if (this.respawnCrystals == null && isArenaLoaded) {
-                    this.dragonRespawnStage = null;
+                    this.betterendisland$dragonRespawnStage = null;
                     this.tryRespawn();
                 }
 
-                this.dragonRespawnStage.tick(this.level, (EndDragonFight) (Object) this, this.respawnCrystals, this.respawnTime++, this.portalLocation);
+                this.betterendisland$dragonRespawnStage.tick(this.level, (EndDragonFight) (Object) this, this.respawnCrystals, this.respawnTime++, this.portalLocation);
             }
 
             if (!this.dragonKilled) {
-                if ((this.dragonUUID == null || ++this.ticksSinceDragonSeen >= 1200) && isArenaLoaded && this.hasDragonEverSpawned) {
+                if ((this.dragonUUID == null || ++this.ticksSinceDragonSeen >= 1200) && isArenaLoaded && this.betterendisland$hasDragonEverSpawned) {
                     this.findOrCreateDragon();
                     this.ticksSinceDragonSeen = 0;
                 }
@@ -167,7 +168,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Override
-    public void reset() {
+    public void betterendisland$reset() {
         // Kill dragon if exists
         List<? extends EnderDragon> dragons = this.level.getDragons();
         dragons.forEach(EnderDragon::discard);
@@ -191,10 +192,10 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         this.dragonUUID = null;
         this.dragonKilled = false;
         this.previouslyKilled = false;
-        this.firstExitPortalSpawn = false;
-        this.hasDragonEverSpawned = false;
-        this.numberTimesDragonKilled = 0;
-        this.dragonRespawnStage = null;
+        this.betterendisland$firstExitPortalSpawn = false;
+        this.betterendisland$hasDragonEverSpawned = false;
+        this.betterendisland$numberTimesDragonKilled = 0;
+        this.betterendisland$dragonRespawnStage = null;
         this.respawnStage = null;
         this.respawnTime = 0;
         this.needsStateScanning = true;
@@ -208,9 +209,9 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             this.respawnCrystals.forEach(EndCrystal::discard);
         }
         this.respawnCrystals = null;
-        List<EndCrystal> remainingSummoningCrystals = checkRespawnCrystals(portalPos.above(1));
+        List<EndCrystal> remainingSummoningCrystals = betterendisland$checkRespawnCrystals(portalPos.above(1));
         remainingSummoningCrystals.forEach(EndCrystal::discard);
-        remainingSummoningCrystals = checkVanillaRespawnCrystals(portalPos.below(2));
+        remainingSummoningCrystals = betterendisland$checkVanillaRespawnCrystals(portalPos.below(2));
         remainingSummoningCrystals.forEach(EndCrystal::discard);
 
         // Get rid of spike crystals
@@ -256,7 +257,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Unique
-    private void scanForInitialState() {
+    private void betterendisland$scanForInitialState() {
         BetterEndIslandCommon.LOGGER.info("Scanning for legacy world dragon fight...");
         boolean hasActiveExitPortal = this.hasActiveExitPortal();
         if (hasActiveExitPortal) {
@@ -266,7 +267,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             BetterEndIslandCommon.LOGGER.info("Found that the dragon has not yet been killed in this world.");
             this.previouslyKilled = false;
             if (this.findExitPortal() == null) {
-                this.spawnPortal(false, false);
+                this.betterendisland$spawnPortal(false, false);
             }
         }
 
@@ -292,9 +293,9 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
     @Inject(method = "onCrystalDestroyed", at = @At("HEAD"), cancellable = true)
     public void betterendisland_onCrystalDestroyed(EndCrystal crystal, DamageSource damageSource, CallbackInfo ci) {
-        if (this.dragonRespawnStage != null && this.respawnCrystals.contains(crystal)) {
+        if (this.betterendisland$dragonRespawnStage != null && this.respawnCrystals.contains(crystal)) {
             BetterEndIslandCommon.LOGGER.info("Aborting dragon respawn sequence");
-            this.dragonRespawnStage = null;
+            this.betterendisland$dragonRespawnStage = null;
             this.respawnTime = 0;
             this.resetSpikeCrystals();
         } else {
@@ -309,15 +310,15 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
     @Inject(method = "tryRespawn", at = @At("HEAD"), cancellable = true)
     public void betterendisland_tryRespawn(CallbackInfo ci) {
-        if (this.dragonKilled && this.dragonRespawnStage == null) {
+        if (this.dragonKilled && this.betterendisland$dragonRespawnStage == null) {
             BlockPos portalPos = this.portalLocation;
             if (portalPos == null) {
                 BetterEndIslandCommon.LOGGER.info("Tried to respawn, but need to find the portal first.");
                 BlockPattern.BlockPatternMatch portalPatternMatch = this.findExitPortal();
                 if (portalPatternMatch == null) {
                     BetterEndIslandCommon.LOGGER.info("Couldn't find a portal, so we made one.");
-                    this.spawnPortal(false, false);
-                    this.spawnPortal(true, true); // Place open, active bottom after spawning tower
+                    this.betterendisland$spawnPortal(false, false);
+                    this.betterendisland$spawnPortal(true, true); // Place open, active bottom after spawning tower
                 } else {
                     BetterEndIslandCommon.LOGGER.info("Found the exit portal & saved its location for next time.");
                 }
@@ -326,9 +327,9 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             }
 
             // Check for all 4 summoning crystals
-            List<EndCrystal> allCrystals = this.checkRespawnCrystals(portalPos.above(1));
+            List<EndCrystal> allCrystals = this.betterendisland$checkRespawnCrystals(portalPos.above(1));
             if (allCrystals.size() != 4) {
-                allCrystals = this.checkVanillaRespawnCrystals(portalPos.below(2));
+                allCrystals = this.betterendisland$checkVanillaRespawnCrystals(portalPos.below(2));
                 if (allCrystals.size() != 4) {
                     return;
                 }
@@ -345,7 +346,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
      */
     @Unique
     @Override
-    public void initialRespawn() {
+    public void betterendisland$initialRespawn() {
         BetterEndIslandCommon.LOGGER.info("Starting initial dragon fight!");
 
         BlockPos portalPos = this.portalLocation;
@@ -354,8 +355,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             BlockPattern.BlockPatternMatch portalPatternMatch = this.findExitPortal();
             if (portalPatternMatch == null) {
                 BetterEndIslandCommon.LOGGER.info("Couldn't find a portal, so we made one.");
-                this.spawnPortal(false, false);
-                this.spawnPortal(true, true); // Place open, active bottom after spawning tower
+                this.betterendisland$spawnPortal(false, false);
+                this.betterendisland$spawnPortal(true, true); // Place open, active bottom after spawning tower
             } else {
                 BetterEndIslandCommon.LOGGER.info("Found the exit portal & saved its location for next time.");
             }
@@ -364,9 +365,9 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         }
 
         // Check for all 4 summoning crystals
-        List<EndCrystal> allCrystals = this.checkRespawnCrystals(portalPos.above(1));
+        List<EndCrystal> allCrystals = this.betterendisland$checkRespawnCrystals(portalPos.above(1));
         if (allCrystals.size() != 4) {
-            allCrystals = this.checkVanillaRespawnCrystals(portalPos.below(2));
+            allCrystals = this.betterendisland$checkVanillaRespawnCrystals(portalPos.below(2));
             if (allCrystals.size() != 4) {
                 return;
             }
@@ -377,7 +378,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Unique
-    private List<EndCrystal> checkRespawnCrystals(BlockPos centerPos) {
+    private List<EndCrystal> betterendisland$checkRespawnCrystals(BlockPos centerPos) {
         List<EndCrystal> foundCrystals = Lists.newArrayList();
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -390,7 +391,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Unique
-    private List<EndCrystal> checkVanillaRespawnCrystals(BlockPos centerPos) {
+    private List<EndCrystal> betterendisland$checkVanillaRespawnCrystals(BlockPos centerPos) {
         List<EndCrystal> foundCrystals = Lists.newArrayList();
 
         for (Direction direction : Direction.Plane.HORIZONTAL) {
@@ -404,8 +405,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
     @Inject(method = "respawnDragon", at = @At("HEAD"), cancellable = true)
     private void betterendisland_respawnDragon(List<EndCrystal> crystals, CallbackInfo ci) {
-        if ((this.dragonKilled || !this.hasDragonEverSpawned) && this.dragonRespawnStage == null) {
-            this.dragonRespawnStage = DragonRespawnStage.START;
+        if ((this.dragonKilled || !this.betterendisland$hasDragonEverSpawned) && this.betterendisland$dragonRespawnStage == null) {
+            this.betterendisland$dragonRespawnStage = DragonRespawnStage.START;
             this.respawnTime = 0;
             this.respawnCrystals = crystals;
         }
@@ -413,7 +414,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Unique
-    private void spawnPortal(boolean isActive, boolean isBottomOnly) {
+    private void betterendisland$spawnPortal(boolean isActive, boolean isBottomOnly) {
         // Find the portal location if it hasn't been found yet
         if (this.portalLocation == null) {
             this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.END_PODIUM_LOCATION).below();
@@ -424,10 +425,10 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
         BetterEndIslandCommon.LOGGER.info("Set the exit portal location to: {}", this.portalLocation);
 
-        BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(this.firstExitPortalSpawn, isBottomOnly, isActive);
+        BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(this.betterendisland$firstExitPortalSpawn, isBottomOnly, isActive);
         BlockPos spawnPos = this.portalLocation.below(5);
         endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
-        this.firstExitPortalSpawn = false;
+        this.betterendisland$firstExitPortalSpawn = false;
     }
 
     @Inject(method = "resetSpikeCrystals", at = @At("HEAD"), cancellable = true)
@@ -457,7 +458,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         if (dragon.getUUID().equals(this.dragonUUID)) {
             this.dragonEvent.setProgress(0.0F);
             this.dragonEvent.setVisible(false);
-            this.spawnPortal(true, true);
+            this.betterendisland$spawnPortal(true, true);
             level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
             this.spawnNewGateway();
             if (!this.previouslyKilled) {
@@ -465,28 +466,33 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             }
             this.previouslyKilled = true;
             this.dragonKilled = true;
-            this.numberTimesDragonKilled++;
+            this.betterendisland$numberTimesDragonKilled++;
         }
         ci.cancel();
     }
 
     @Override
-    public void setDragonRespawnStage(DragonRespawnStage stage) {
-        if (this.dragonRespawnStage == null) {
+    public void betterendisland$setDragonRespawnStage(DragonRespawnStage stage) {
+        if (this.betterendisland$dragonRespawnStage == null) {
             throw new IllegalStateException("Better Dragon respawn isn't in progress, can't skip ahead in the animation.");
         } else {
             this.respawnTime = 0;
             if (stage == DragonRespawnStage.END) {
                 // Create new dragon
-                this.dragonRespawnStage = null;
+                this.betterendisland$dragonRespawnStage = null;
                 this.dragonKilled = false;
                 EnderDragon newDragon = this.createNewDragon();
-                for (ServerPlayer serverPlayer : this.dragonEvent.getPlayers()) {
-                    CriteriaTriggers.SUMMONED_ENTITY.trigger(serverPlayer, newDragon);
+
+                // Only trigger summon trigger (used for respawn advancement) if the dragon has been killed before,
+                // since we auto-summon the dragon for the first fight
+                if (this.previouslyKilled) {
+                    for (ServerPlayer serverPlayer : this.dragonEvent.getPlayers()) {
+                        CriteriaTriggers.SUMMONED_ENTITY.trigger(serverPlayer, newDragon);
+                    }
                 }
 
                 // Place broken tower w/ explosion effects
-                this.spawnPortal(false, false);
+                this.betterendisland$spawnPortal(false, false);
                 level.explode(null, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
                 level.players().forEach(player -> {
                     level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
@@ -495,21 +501,21 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                     }
                 });
                 // Place open, inactive bottom if we're not transitioning from an initial tower
-                if (this.hasDragonEverSpawned) {
-                    this.spawnPortal(false, true);
+                if (this.betterendisland$hasDragonEverSpawned) {
+                    this.betterendisland$spawnPortal(false, true);
                     level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
                 }
 
-                this.hasDragonEverSpawned = true;
+                this.betterendisland$hasDragonEverSpawned = true;
             } else {
-                this.dragonRespawnStage = stage;
+                this.betterendisland$dragonRespawnStage = stage;
             }
         }
     }
 
     @Override
-    public void tickBellSound() {
-        if (!this.hasDragonEverSpawned || this.dragonRespawnStage != null) {
+    public void betterendisland$tickBellSound() {
+        if (!this.betterendisland$hasDragonEverSpawned || this.betterendisland$dragonRespawnStage != null) {
             long gameTime = this.level.getGameTime();
             int soundY = this.portalLocation == null ? 80 : this.portalLocation.getY() + 15;
 
@@ -529,17 +535,17 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Override
-    public DragonRespawnStage getDragonRespawnStage() {
-        return this.dragonRespawnStage;
+    public DragonRespawnStage betterendisland$getDragonRespawnStage() {
+        return this.betterendisland$dragonRespawnStage;
     }
 
     @Override
-    public boolean hasDragonEverSpawned() {
-        return this.hasDragonEverSpawned;
+    public boolean betterendisland$hasDragonEverSpawned() {
+        return this.betterendisland$hasDragonEverSpawned;
     }
 
     @Override
-    public int getNumberTimesDragonKilled() {
-        return this.numberTimesDragonKilled;
+    public int betterendisland$getNumberTimesDragonKilled() {
+        return this.betterendisland$numberTimesDragonKilled;
     }
 }

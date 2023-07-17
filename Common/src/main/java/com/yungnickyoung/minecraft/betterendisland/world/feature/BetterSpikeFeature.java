@@ -77,7 +77,7 @@ public class BetterSpikeFeature {
 
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).getNumberTimesDragonKilled();
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).betterendisland$getNumberTimesDragonKilled();
         }
 
         // Place top part
