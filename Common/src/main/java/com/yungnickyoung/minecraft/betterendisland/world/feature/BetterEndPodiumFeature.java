@@ -3,6 +3,7 @@ package com.yungnickyoung.minecraft.betterendisland.world.feature;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
+import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
@@ -33,7 +34,8 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
             new BlockReplaceProcessor(
                     Blocks.GRAY_CONCRETE.defaultBlockState(),
                     new BlockStateRandomizer(Blocks.BEDROCK.defaultBlockState()),
-                    false, false, false, false)
+                    false, false, false, false),
+            new DragonEggProcessor()
     );
 
     private static final StructureProcessor ACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(

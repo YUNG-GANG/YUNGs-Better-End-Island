@@ -2,6 +2,7 @@ package com.yungnickyoung.minecraft.betterendisland.module;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
+import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import com.yungnickyoung.minecraft.yungsapi.api.autoregister.AutoRegister;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
@@ -13,4 +14,7 @@ public class StructureProcessorTypeModule {
 
     @AutoRegister("obsidian_processor")
     public static StructureProcessorType<ObsidianProcessor> OBSIDIAN_PROCESSOR = () -> ObsidianProcessor.CODEC;
+
+    @AutoRegister("dragon_egg_processor")
+    public static StructureProcessorType<DragonEggProcessor> DRAGON_EGG_PROCESSOR = () -> DragonEggProcessor.CODEC;
 }

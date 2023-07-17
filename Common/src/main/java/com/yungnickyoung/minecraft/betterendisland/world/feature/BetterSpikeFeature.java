@@ -8,6 +8,7 @@ import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import com.yungnickyoung.minecraft.betterendisland.world.SpikeCacheLoader;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
+import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
@@ -55,7 +56,8 @@ public class BetterSpikeFeature {
             new BlockReplaceProcessor(
                     Blocks.PURPLE_CONCRETE.defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState()),
-                    false, false, false, false)
+                    false, false, false, false),
+            new DragonEggProcessor()
     );
 
     public static List<SpikeFeature.EndSpike> getSpikesForLevel(WorldGenLevel level) {
