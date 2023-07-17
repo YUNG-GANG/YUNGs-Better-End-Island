@@ -30,7 +30,6 @@
     "fabricloader": ">=0.14",
     "fabric": ">=0.60.0",
     "minecraft": ">=1.19.2",
-    "cloth-config2": ">=8.0.75",
     "java": ">=17",
     "yungsapi": ">=${minecraft_version}-Fabric-${yungsapi_version}"
   }
