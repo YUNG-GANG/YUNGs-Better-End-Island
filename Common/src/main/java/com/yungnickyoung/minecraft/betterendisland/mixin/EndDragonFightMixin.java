@@ -10,6 +10,7 @@ import com.yungnickyoung.minecraft.betterendisland.world.DragonRespawnStage;
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndPodiumFeature;
+import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndSpawnPlatformFeature;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterSpikeFeature;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.Util;
@@ -53,6 +54,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -243,6 +245,10 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), null);
             BetterSpikeFeature.placeSpike(level, RandomSource.create(), spikeConfig, spike, true);
         });
+
+        // Reset spawn playform to initial state
+        BlockPos platformPos = ServerLevel.END_SPAWN_POINT.below();
+        BetterEndSpawnPlatformFeature.place(level, platformPos);
 
         // Remove all gateways
         for (int i = 0; i < 20; i++) {
@@ -518,6 +524,32 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                     this.betterendisland$spawnPortal(false, true);
                     level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
                 }
+
+                // Update obsidian -> crying obsidian on all existing gateways
+                int dragonKills = Mth.clamp(this.betterendisland$numberTimesDragonKilled, 0, 10);
+                float cryingChance = Mth.lerp(dragonKills / 10f, 0f, 0.5f);
+                List<Integer> existingGateways = new ArrayList<>(ContiguousSet.create(Range.closedOpen(0, 20), DiscreteDomain.integers()));
+                existingGateways.removeAll(this.gateways);
+                existingGateways.forEach(gateway -> {
+                    int x = Mth.floor(96.0D * Math.cos(2.0D * (-Math.PI + 0.15707963267948966D * (double) gateway)));
+                    int z = Mth.floor(96.0D * Math.sin(2.0D * (-Math.PI + 0.15707963267948966D * (double) gateway)));
+                    BlockPos gatewayPos = new BlockPos(x, 75, z);
+                    RandomSource gatewayRandom = RandomSource.create(Mth.getSeed(gatewayPos));
+                    BlockPos.betweenClosed(gatewayPos.offset(-1, -4, -1), gatewayPos.offset(1, 4, 1)).forEach(pos -> {
+                        if (level.getBlockState(pos).is(Blocks.OBSIDIAN) && gatewayRandom.nextFloat() < cryingChance) {
+                            this.level.setBlockAndUpdate(pos, Blocks.CRYING_OBSIDIAN.defaultBlockState());
+                        }
+                    });
+                });
+
+                // Update obsidian -> crying obsidian on spawn platform
+                BlockPos platformPos = ServerLevel.END_SPAWN_POINT;
+                RandomSource platformRandom = RandomSource.create(Mth.getSeed(platformPos));
+                BlockPos.betweenClosed(platformPos.offset(-3, -15, -3), platformPos.offset(3, 4, 3)).forEach(pos -> {
+                    if (level.getBlockState(pos).is(Blocks.OBSIDIAN) && platformRandom.nextFloat() < cryingChance) {
+                        this.level.setBlockAndUpdate(pos, Blocks.CRYING_OBSIDIAN.defaultBlockState());
+                    }
+                });
 
                 this.betterendisland$hasDragonEverSpawned = true;
             } else {

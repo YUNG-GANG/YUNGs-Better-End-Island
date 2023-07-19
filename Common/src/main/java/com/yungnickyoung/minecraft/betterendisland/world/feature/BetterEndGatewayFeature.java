@@ -1,11 +1,12 @@
 package com.yungnickyoung.minecraft.betterendisland.world.feature;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
-import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
+import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
-import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
+import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
@@ -36,8 +37,13 @@ public class BetterEndGatewayFeature {
         WorldGenLevel level = ctx.level();
         EndGatewayConfiguration config = ctx.config();
 
+        int numberTimesDragonKilled = 0;
+        if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).betterendisland$getNumberTimesDragonKilled();
+        }
+
         ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "gateway");
-        boolean placed = placeTemplate(level, ctx.random(), origin, template);
+        boolean placed = placeTemplate(level, ctx.random(), origin, template, numberTimesDragonKilled);
 
         BlockPos portalPos = new BlockPos(origin);
         level.setBlock(portalPos, Blocks.END_GATEWAY.defaultBlockState(), 3);
@@ -54,7 +60,7 @@ public class BetterEndGatewayFeature {
         return placed;
     }
 
-    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, ResourceLocation id) {
+    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, ResourceLocation id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
@@ -66,6 +72,7 @@ public class BetterEndGatewayFeature {
         BlockPos cornerPos = centerPos.offset(-template.getSize().getX() / 2, -template.getSize().getY() / 2, -template.getSize().getZ() / 2);
         StructurePlaceSettings structurePlaceSettings = new StructurePlaceSettings();
         PROCESSORS.forEach(structurePlaceSettings::addProcessor);
+        structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(Rotation.NONE); // Structure is radially symmetrical so rotation doesn't matter
         structurePlaceSettings.setRotationPivot(new BlockPos(1, 0, 1));
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
