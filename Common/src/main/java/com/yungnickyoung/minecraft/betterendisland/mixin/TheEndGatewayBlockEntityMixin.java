@@ -13,13 +13,14 @@ import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.LevelChunk;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TheEndGatewayBlockEntity.class)
 public abstract class TheEndGatewayBlockEntityMixin {
-    private static final TagKey<Block> CANNOT_PLACE_ON = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(BetterEndIslandCommon.MOD_ID, "end_gateway_cannot_place_player_on"));
+    @Unique private static final TagKey<Block> CANNOT_PLACE_ON = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(BetterEndIslandCommon.MOD_ID, "end_gateway_cannot_place_player_on"));
 
     @Inject(method = "findTallestBlock", at = @At("HEAD"), cancellable = true)
     private static void betterendisland_findTallestBlock(BlockGetter level, BlockPos pos, int radius, boolean placeAnywhere, CallbackInfoReturnable<BlockPos> cir) {

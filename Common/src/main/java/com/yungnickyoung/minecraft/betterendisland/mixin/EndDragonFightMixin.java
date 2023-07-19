@@ -230,10 +230,13 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         // Reset spikes to initial state
         allSpikes.forEach(spike -> {
             int resetRadius = 11;
-            BlockPos.betweenClosed(
-                        new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 10, spike.getCenterZ() - resetRadius),
-                        new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 30, spike.getCenterZ() + resetRadius))
-                    .forEach(blockPos -> level.removeBlock(blockPos, false));
+            for (BlockPos blockPos : BlockPos.betweenClosed(
+                    new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 30, spike.getCenterZ() - resetRadius),
+                    new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 30, spike.getCenterZ() + resetRadius))) {
+                if (!level.getBlockState(blockPos).is(Blocks.END_STONE)) {
+                    level.removeBlock(blockPos, false);
+                }
+            }
 
             // Place new spike
             SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), null);

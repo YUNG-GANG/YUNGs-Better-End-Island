@@ -31,23 +31,23 @@ public abstract class ServerLevelMixin extends Level {
         super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7);
     }
 
-    ResourceLocation END_DIMENSION = new ResourceLocation("minecraft", "the_end");
+    @Unique ResourceLocation END_DIMENSION = new ResourceLocation("minecraft", "the_end");
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void betterendisland_tickInitialDragonSummonTrigger(BooleanSupplier booleanSupplier, CallbackInfo ci) {
-        tickSummonDragonFight();
-        tickBellSound();
+        betterendisland$tickSummonDragonFight();
+        betterendisland$tickBellSound();
     }
 
     @Unique
-    private void tickBellSound() {
+    private void betterendisland$tickBellSound() {
         if (this.dimension().location().equals(END_DIMENSION) && this.dragonFight() != null) {
             ((IDragonFight) this.dragonFight()).betterendisland$tickBellSound();
         }
     }
 
     @Unique
-    private void tickSummonDragonFight() {
+    private void betterendisland$tickSummonDragonFight() {
         if (this.dimension().location().equals(END_DIMENSION)
                 && this.dragonFight() != null
                 && !((IDragonFight) this.dragonFight()).betterendisland$hasDragonEverSpawned()

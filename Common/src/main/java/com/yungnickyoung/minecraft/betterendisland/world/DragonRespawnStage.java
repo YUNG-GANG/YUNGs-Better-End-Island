@@ -1,6 +1,7 @@
 package com.yungnickyoung.minecraft.betterendisland.world;
 
 import com.google.common.collect.ImmutableList;
+import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -10,6 +11,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
@@ -53,8 +55,9 @@ public enum DragonRespawnStage implements StringRepresentable {
                     SpikeFeature.EndSpike spike = allSpikes.get(spikeIndex);
                     int pillarHeight = (spike.getHeight() - 73) / 3;
                     if (pillarHeight == 10) pillarHeight = 9; // We don't have a 10th variant
-                    ((IEndSpike) spike).setCrystalYOffsetFromPillarHeight(pillarHeight);
-                    int crystalY = 60 + ((IEndSpike)spike).getCrystalYOffset() - 1; // Uses hardcoded topY of 60; should be same as value in BetterSpikeFeature
+                    ((IEndSpike) spike).betterendisland$setCrystalYOffsetFromPillarHeight(pillarHeight);
+                    int topY = BetterEndIslandCommon.betterEnd ? 70 : 60; // Uses hardcoded topY; should be same as value in BetterSpikeFeature
+                    int crystalY = topY + ((IEndSpike)spike).betterendisland$getCrystalYOffset() - 1;
 
                     if (isFirstTickForSpike) {
                         // On first tick for summoning a spike, set beam target for all crystals to point at the spike
@@ -74,10 +77,12 @@ public enum DragonRespawnStage implements StringRepresentable {
                         });
 
                         int resetRadius = 11;
-                        for (BlockPos blockPos : net.minecraft.core.BlockPos.betweenClosed(
-                                new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 10, spike.getCenterZ() - resetRadius),
+                        for (BlockPos blockPos : BlockPos.betweenClosed(
+                                new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 30, spike.getCenterZ() - resetRadius),
                                 new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 30, spike.getCenterZ() + resetRadius))) {
-                            level.removeBlock(blockPos, false);
+                            if (!level.getBlockState(blockPos).is(Blocks.END_STONE)) {
+                                level.removeBlock(blockPos, false);
+                            }
                         }
 
                         // Place new spike

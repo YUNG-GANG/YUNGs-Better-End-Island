@@ -83,7 +83,7 @@ public class BetterSpikeFeature {
         }
 
         // Place top part
-        int topY = 60;
+        int topY = BetterEndIslandCommon.betterEnd ? 70 : 60;
         BlockPos centerPos = new BlockPos(spike.getCenterX(), topY, spike.getCenterZ());
         if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getFirst(), numberTimesDragonKilled)) {
             BetterEndIslandCommon.LOGGER.error("Unable to place top spike at {}. This shouldn't happen!", centerPos);
@@ -102,7 +102,7 @@ public class BetterSpikeFeature {
             EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel());
             endCrystal.setBeamTarget(config.getCrystalBeamTarget());
             endCrystal.setInvulnerable(config.isCrystalInvulnerable());
-            int crystalY = topY + ((IEndSpike)spike).getCrystalYOffset();
+            int crystalY = topY + ((IEndSpike)spike).betterendisland$getCrystalYOffset();
             endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
             level.addFreshEntity(endCrystal);
             level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.BEDROCK.defaultBlockState(), 3);
@@ -118,7 +118,7 @@ public class BetterSpikeFeature {
 
         // Update spike crystal height, which depends on the template chosen.
         // This doesn't really belong here, but it's the easiest way to do it.
-        ((IEndSpike) spike).setCrystalYOffsetFromPillarHeight(pillarHeight);
+        ((IEndSpike) spike).betterendisland$setCrystalYOffsetFromPillarHeight(pillarHeight);
 
         return new Pair<>(new ResourceLocation(BetterEndIslandCommon.MOD_ID, topName), new ResourceLocation(BetterEndIslandCommon.MOD_ID, bottomName));
     }

@@ -15,5 +15,6 @@
   "injectors": {
     "defaultRequire": 1
   },
+  "mixinPriority": 500,
   "minVersion": "0.8"
 }
