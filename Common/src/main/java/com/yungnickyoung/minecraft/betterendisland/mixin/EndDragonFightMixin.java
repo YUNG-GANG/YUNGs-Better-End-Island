@@ -8,6 +8,7 @@ import com.google.common.collect.Range;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.DragonRespawnStage;
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
+import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndPodiumFeature;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterSpikeFeature;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -467,6 +468,15 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             if (!this.previouslyKilled) {
                 this.level.setBlockAndUpdate(this.portalLocation.above(), Blocks.DRAGON_EGG.defaultBlockState());
             }
+
+            // Turn bedrock on spikes into obsidian
+            int topY = BetterEndIslandCommon.betterEnd ? 70 : 60;
+            List<SpikeFeature.EndSpike> spikes = SpikeFeature.getSpikesForLevel(level);
+            spikes.forEach(spike -> {
+                int crystalY = topY + ((IEndSpike)spike).betterendisland$getCrystalYOffset();
+                level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.OBSIDIAN.defaultBlockState(), 3);
+            });
+
             this.previouslyKilled = true;
             this.dragonKilled = true;
             this.betterendisland$numberTimesDragonKilled++;

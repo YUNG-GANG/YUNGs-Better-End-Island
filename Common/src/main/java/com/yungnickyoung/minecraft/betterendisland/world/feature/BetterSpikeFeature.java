@@ -97,7 +97,7 @@ public class BetterSpikeFeature {
             return;
         }
 
-        // Spawn crystal and bedrock below it
+        // If not initial spawn, spawn crystal and bedrock below it
         if (!isInitialSpawn) {
             EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel());
             endCrystal.setBeamTarget(config.getCrystalBeamTarget());
