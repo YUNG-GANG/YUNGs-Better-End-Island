@@ -80,6 +80,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
                 BlockPos crystalPos = centerPos.relative(direction, 8);
                 EndCrystal crystal = new EndCrystal((Level) level, crystalPos.getX() + 0.5D, crystalPos.getY(), crystalPos.getZ() + 0.5D);
                 crystal.setShowBottom(false);
+                crystal.setInvulnerable(true); // Prevent player destroying crystals, which would result in a soft lock
                 level.addFreshEntity(crystal);
             }
         }
