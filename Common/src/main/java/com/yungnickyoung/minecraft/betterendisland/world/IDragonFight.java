@@ -8,4 +8,5 @@ public interface IDragonFight {
     int betterendisland$getNumberTimesDragonKilled();
     void betterendisland$tickBellSound();
     void betterendisland$reset();
+    void betterendisland$clearVanillaPillars();
 }

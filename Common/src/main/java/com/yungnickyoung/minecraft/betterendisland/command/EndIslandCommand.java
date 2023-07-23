@@ -14,28 +14,23 @@ public class EndIslandCommand {
         dispatcher.register(Commands.literal("end_island")
                 .requires((source) -> source.hasPermission(2))
                 .then(Commands.literal("reset")
-                        .executes(context -> execute(context.getSource(), "reset")))
+                        .executes(context -> executeReset(context.getSource())))
         );
     }
 
-    public static int execute(CommandSourceStack commandSource, String action) {
-        if (action.equals("reset")) {
-            ServerLevel serverLevel = commandSource.getServer().getLevel(Level.END);
-            if (serverLevel == null) {
-                commandSource.sendFailure(Component.literal("Could not find the End dimension."));
-                return -1;
-            }
-            if (serverLevel.dragonFight() == null) {
-                commandSource.sendFailure(Component.literal("Could not find the dragon fight."));
-                return -1;
-            }
-            IDragonFight dragonFight = (IDragonFight) serverLevel.dragonFight(); // Cast to custom interface
-            dragonFight.betterendisland$reset();
-            commandSource.sendSuccess(Component.literal("Ender Dragon fight has been reset."), false);
-            return 1;
-        } else {
-            commandSource.sendFailure(Component.literal("Unrecognized action."));
+    public static int executeReset(CommandSourceStack commandSource) {
+        ServerLevel serverLevel = commandSource.getServer().getLevel(Level.END);
+        if (serverLevel == null) {
+            commandSource.sendFailure(Component.literal("Could not find the End dimension."));
             return -1;
         }
+        if (serverLevel.dragonFight() == null) {
+            commandSource.sendFailure(Component.literal("Could not find the dragon fight."));
+            return -1;
+        }
+        IDragonFight dragonFight = (IDragonFight) serverLevel.dragonFight(); // Cast to custom interface
+        dragonFight.betterendisland$reset();
+        commandSource.sendSuccess(Component.literal("Ender Dragon fight has been reset."), false);
+        return 1;
     }
 }
