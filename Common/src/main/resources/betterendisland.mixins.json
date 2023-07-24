@@ -5,6 +5,7 @@
   "refmap": "betterendisland.refmap.json",
   "mixins": [
     "EndDragonFightMixin",
+    "EndergeticExpansionMixins",
     "EndGatewayFeatureMixin",
     "EndSpikeMixin",
     "ServerLevelMixin",
