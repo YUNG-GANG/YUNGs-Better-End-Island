@@ -2,6 +2,7 @@ package com.yungnickyoung.minecraft.betterendisland.mixin;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -36,8 +37,8 @@ import java.util.function.Supplier;
 public abstract class EndergeticExpansionMixins extends Level {
     @Shadow @Final @Mutable @Nullable private EndDragonFight dragonFight;
 
-    protected EndergeticExpansionMixins(WritableLevelData $$0, ResourceKey<Level> $$1, Holder<DimensionType> $$2, Supplier<ProfilerFiller> $$3, boolean $$4, boolean $$5, long $$6, int $$7) {
-        super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7);
+    protected EndergeticExpansionMixins(WritableLevelData $$0, ResourceKey<Level> $$1, RegistryAccess $$2, Holder<DimensionType> $$3, Supplier<ProfilerFiller> $$4, boolean $$5, boolean $$6, long $$7, int $$8) {
+        super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8);
     }
 
     /**
@@ -46,7 +47,7 @@ public abstract class EndergeticExpansionMixins extends Level {
     @Inject(at = @At("RETURN"), method = "<init>")
     private void betterendisland_overwriteModdedDragonFight(MinecraftServer server, Executor p_i232604_2_, LevelStorageSource.LevelStorageAccess p_i232604_3_, ServerLevelData p_i232604_4_, ResourceKey<Level> p_i232604_5_, LevelStem p_i232604_7_, ChunkProgressListener p_i232604_8_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, CallbackInfo info) {
         if (BetterEndIslandCommon.endergetic && this.dragonFight != null) {
-            this.dragonFight = new EndDragonFight((ServerLevel) (Object) this, server.getWorldData().worldGenSettings().seed(), server.getWorldData().endDragonFightData());
+            this.dragonFight = new EndDragonFight((ServerLevel) (Object) this, server.getWorldData().worldGenOptions().seed(), server.getWorldData().endDragonFightData());
         }
     }
 }

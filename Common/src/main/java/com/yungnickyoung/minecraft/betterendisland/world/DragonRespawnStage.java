@@ -10,7 +10,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.levelgen.feature.Feature;
@@ -65,7 +65,7 @@ public enum DragonRespawnStage implements StringRepresentable {
                             crystal.setBeamTarget(new BlockPos(spike.getCenterX(), crystalY, spike.getCenterZ()));
                         }
                     } else {
-                        level.explode(null, (float) spike.getCenterX() + 0.5F, crystalY, (float) spike.getCenterZ() + 0.5F, 5.0F, Explosion.BlockInteraction.DESTROY);
+                        level.explode(null, (float) spike.getCenterX() + 0.5F, crystalY, (float) spike.getCenterZ() + 0.5F, 5.0F, Level.ExplosionInteraction.BLOCK);
                         level.players().forEach(player -> {
                             level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, crystalY, (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
                             level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, crystalY, (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
@@ -105,7 +105,7 @@ public enum DragonRespawnStage implements StringRepresentable {
 
                 for (EndCrystal crystal : summoningCrystals) {
                     crystal.setBeamTarget(null);
-                    level.explode(crystal, crystal.getX(), crystal.getY(), crystal.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
+                    level.explode(crystal, crystal.getX(), crystal.getY(), crystal.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
                     crystal.discard();
                 }
             } else if (phaseTimer >= 80) {

@@ -5,7 +5,7 @@ import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
-import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
+import com.yungnickyoung.minecraft.yungsapi.api.world.randomize.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;

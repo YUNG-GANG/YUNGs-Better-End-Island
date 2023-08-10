@@ -10,7 +10,7 @@ import com.yungnickyoung.minecraft.betterendisland.world.SpikeCacheLoader;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
-import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
+import com.yungnickyoung.minecraft.yungsapi.api.world.randomize.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;

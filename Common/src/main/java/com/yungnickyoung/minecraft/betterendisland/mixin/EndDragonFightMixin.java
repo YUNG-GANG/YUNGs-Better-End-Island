@@ -34,7 +34,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.ChunkPos;
-import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.pattern.BlockPattern;
@@ -573,7 +573,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             this.dragonEvent.setProgress(0.0F);
             this.dragonEvent.setVisible(false);
             this.betterendisland$spawnPortal(true, true);
-            level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
+            level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             this.spawnNewGateway();
             if (!this.previouslyKilled) {
                 this.level.setBlockAndUpdate(this.portalLocation.above(), Blocks.DRAGON_EGG.defaultBlockState());
@@ -616,7 +616,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
                 // Place broken tower w/ explosion effects
                 this.betterendisland$spawnPortal(false, false);
-                level.explode(null, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
+                level.explode(null, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
                 level.players().forEach(player -> {
                     level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
                     if (player.distanceToSqr(this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ()) > 32) {
@@ -626,7 +626,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 // Place open, inactive bottom if we're not transitioning from an initial tower
                 if (this.betterendisland$hasDragonEverSpawned) {
                     this.betterendisland$spawnPortal(false, true);
-                    level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Explosion.BlockInteraction.NONE);
+                    level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
                 }
 
                 // Update obsidian -> crying obsidian on all existing gateways

@@ -27,10 +27,10 @@
     "betterendisland_fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14",
-    "fabric": ">=0.60.0",
-    "minecraft": ">=1.19.2",
+    "fabricloader": ">=${fabric_loader_version}",
+    "fabric": ">=${fabric_version}",
+    "minecraft": ">=${mc_version}",
     "java": ">=17",
-    "yungsapi": ">=${minecraft_version}-Fabric-${yungsapi_version}"
+    "yungsapi": ">=${mc_version}-Fabric-${yungsapi_version}"
   }
 }

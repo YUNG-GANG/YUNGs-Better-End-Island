@@ -2,7 +2,7 @@ package com.yungnickyoung.minecraft.betterendisland.mixin;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.BlockGetter;
@@ -20,7 +20,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TheEndGatewayBlockEntity.class)
 public abstract class TheEndGatewayBlockEntityMixin {
-    @Unique private static final TagKey<Block> CANNOT_PLACE_ON = TagKey.create(Registry.BLOCK_REGISTRY, new ResourceLocation(BetterEndIslandCommon.MOD_ID, "end_gateway_cannot_place_player_on"));
+    @Unique private static final TagKey<Block> CANNOT_PLACE_ON = TagKey.create(Registries.BLOCK, new ResourceLocation(BetterEndIslandCommon.MOD_ID, "end_gateway_cannot_place_player_on"));
 
     @Inject(method = "findTallestBlock", at = @At("HEAD"), cancellable = true)
     private static void betterendisland_findTallestBlock(BlockGetter level, BlockPos pos, int radius, boolean placeAnywhere, CallbackInfoReturnable<BlockPos> cir) {

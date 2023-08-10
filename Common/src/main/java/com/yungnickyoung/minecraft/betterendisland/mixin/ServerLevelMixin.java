@@ -2,6 +2,7 @@ package com.yungnickyoung.minecraft.betterendisland.mixin;
 
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import net.minecraft.core.Holder;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -25,12 +26,11 @@ import java.util.function.Supplier;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin extends Level {
-    @Shadow @Nullable public abstract EndDragonFight dragonFight();
-
-    protected ServerLevelMixin(WritableLevelData $$0, ResourceKey<Level> $$1, Holder<DimensionType> $$2, Supplier<ProfilerFiller> $$3, boolean $$4, boolean $$5, long $$6, int $$7) {
-        super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7);
+    protected ServerLevelMixin(WritableLevelData $$0, ResourceKey<Level> $$1, RegistryAccess $$2, Holder<DimensionType> $$3, Supplier<ProfilerFiller> $$4, boolean $$5, boolean $$6, long $$7, int $$8) {
+        super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8);
     }
 
+    @Shadow @Nullable public abstract EndDragonFight dragonFight();
     @Unique ResourceLocation END_DIMENSION = new ResourceLocation("minecraft", "the_end");
 
     @Inject(method = "tick", at = @At("HEAD"))
