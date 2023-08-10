@@ -10,10 +10,12 @@ public class BetterEndIslandCommon {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     public static boolean betterEnd;
+    public static boolean endergetic;
 
     public static void init() {
         YungAutoRegister.scanPackageForAnnotations("com.yungnickyoung.minecraft.betterendisland.module");
         Services.MODULES.loadModules();
         betterEnd = Services.PLATFORM.isModLoaded("betterend");
+        endergetic = Services.PLATFORM.isModLoaded("endergetic");
     }
 }

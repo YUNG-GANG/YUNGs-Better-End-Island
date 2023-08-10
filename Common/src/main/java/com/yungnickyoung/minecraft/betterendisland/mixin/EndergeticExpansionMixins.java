@@ -1,6 +1,6 @@
 package com.yungnickyoung.minecraft.betterendisland.mixin;
 
-import com.yungnickyoung.minecraft.betterendisland.services.Services;
+import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -45,7 +45,7 @@ public abstract class EndergeticExpansionMixins extends Level {
      */
     @Inject(at = @At("RETURN"), method = "<init>")
     private void betterendisland_overwriteModdedDragonFight(MinecraftServer server, Executor p_i232604_2_, LevelStorageSource.LevelStorageAccess p_i232604_3_, ServerLevelData p_i232604_4_, ResourceKey<Level> p_i232604_5_, LevelStem p_i232604_7_, ChunkProgressListener p_i232604_8_, boolean p_215006_, long p_215007_, List<CustomSpawner> p_215008_, boolean p_215009_, CallbackInfo info) {
-        if (Services.PLATFORM.isModLoaded("endergetic") && this.dragonFight != null) {
+        if (BetterEndIslandCommon.endergetic && this.dragonFight != null) {
             this.dragonFight = new EndDragonFight((ServerLevel) (Object) this, server.getWorldData().worldGenSettings().seed(), server.getWorldData().endDragonFightData());
         }
     }
