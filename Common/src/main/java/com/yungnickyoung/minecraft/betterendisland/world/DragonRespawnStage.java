@@ -77,9 +77,10 @@ public enum DragonRespawnStage implements StringRepresentable {
                         });
 
                         int resetRadius = 11;
+                        int verticalRadius = BetterEndIslandCommon.betterEnd ? 40 : 30;
                         for (BlockPos blockPos : BlockPos.betweenClosed(
-                                new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - 30, spike.getCenterZ() - resetRadius),
-                                new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + 30, spike.getCenterZ() + resetRadius))) {
+                                new BlockPos(spike.getCenterX() - resetRadius, spike.getHeight() - verticalRadius, spike.getCenterZ() - resetRadius),
+                                new BlockPos(spike.getCenterX() + resetRadius, spike.getHeight() + verticalRadius, spike.getCenterZ() + resetRadius))) {
                             if (!level.getBlockState(blockPos).is(Blocks.END_STONE)) {
                                 level.removeBlock(blockPos, false);
                             }
