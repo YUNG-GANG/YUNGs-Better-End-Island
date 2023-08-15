@@ -29,8 +29,8 @@ public class BetterEndSpawnPlatformFeature {
     public static boolean place(ServerLevel level, BlockPos pos) {
         BlockPos origin = pos.offset(0, -14, 0);
         int numberTimesDragonKilled = 0;
-        if (level.dragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) level.dragonFight()).betterendisland$getNumberTimesDragonKilled();
+        if (level.getDragonFight() != null) {
+            numberTimesDragonKilled = ((IDragonFight) level.getDragonFight()).betterendisland$numTimesDragonKilled();
         }
         ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "spawn_platform");
         return placeTemplate(level, RandomSource.create(), origin, template, numberTimesDragonKilled);

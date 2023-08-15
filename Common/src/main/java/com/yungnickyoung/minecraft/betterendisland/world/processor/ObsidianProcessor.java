@@ -42,15 +42,15 @@ public class ObsidianProcessor extends StructureProcessor {
                                                              StructureTemplate.StructureBlockInfo blockInfoLocal,
                                                              StructureTemplate.StructureBlockInfo blockInfoGlobal,
                                                              StructurePlaceSettings structurePlacementData) {
-        if (blockInfoGlobal.state.is(Blocks.OBSIDIAN)) {
-            RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos);
+        if (blockInfoGlobal.state().is(Blocks.OBSIDIAN)) {
+            RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos());
             BlockState outputState = Blocks.OBSIDIAN.defaultBlockState();
             int dragonKills = Mth.clamp(this.numberTimesDragonKilled, 0, 10);
             float cryingChance = Mth.lerp(dragonKills / 10f, 0f, 0.5f);
             if (random.nextFloat() < cryingChance) {
                 outputState = Blocks.CRYING_OBSIDIAN.defaultBlockState();
             }
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos, outputState, blockInfoGlobal.nbt);
+            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), outputState, blockInfoGlobal.nbt());
         }
         return blockInfoGlobal;
     }

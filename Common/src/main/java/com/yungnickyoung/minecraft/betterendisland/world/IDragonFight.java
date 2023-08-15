@@ -3,10 +3,14 @@ package com.yungnickyoung.minecraft.betterendisland.world;
 public interface IDragonFight {
     void betterendisland$setDragonRespawnStage(DragonRespawnStage stage);
     DragonRespawnStage betterendisland$getDragonRespawnStage();
-    boolean betterendisland$hasDragonEverSpawned();
     void betterendisland$initialRespawn();
-    int betterendisland$getNumberTimesDragonKilled();
     void betterendisland$tickBellSound();
     void betterendisland$reset();
     void betterendisland$clearVanillaPillars();
+    boolean betterendisland$firstExitPortalSpawn();
+    void betterendisland$setFirstExitPortalSpawn(boolean bl);
+    boolean betterendisland$hasDragonEverSpawned();
+    void betterendisland$setHasDragonEverSpawned(boolean bl);
+    int betterendisland$numTimesDragonKilled();
+    void betterendisland$setNumTimesDragonKilled(int i);
 }

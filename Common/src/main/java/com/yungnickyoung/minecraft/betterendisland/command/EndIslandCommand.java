@@ -24,13 +24,13 @@ public class EndIslandCommand {
             commandSource.sendFailure(Component.literal("Could not find the End dimension."));
             return -1;
         }
-        if (serverLevel.dragonFight() == null) {
+        if (serverLevel.getDragonFight() == null) {
             commandSource.sendFailure(Component.literal("Could not find the dragon fight."));
             return -1;
         }
-        IDragonFight dragonFight = (IDragonFight) serverLevel.dragonFight(); // Cast to custom interface
+        IDragonFight dragonFight = (IDragonFight) serverLevel.getDragonFight(); // Cast to custom interface
         dragonFight.betterendisland$reset();
-        commandSource.sendSuccess(Component.literal("Ender Dragon fight has been reset."), false);
+        commandSource.sendSuccess(() -> Component.literal("Ender Dragon fight has been reset."), false);
         return 1;
     }
 }

@@ -19,7 +19,6 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -54,7 +53,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -98,34 +96,12 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Unique private boolean betterendisland$hasDragonEverSpawned;
     @Unique private int betterendisland$numberTimesDragonKilled = 0;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    public void betterendisland_EndDragonFight(ServerLevel level, long seed, CompoundTag tag, CallbackInfo ci) {
-        if (tag.getBoolean("IsRespawning")) {
+    @Inject(method = "<init>(Lnet/minecraft/server/level/ServerLevel;JLnet/minecraft/world/level/dimension/end/EndDragonFight$Data;Lnet/minecraft/core/BlockPos;)V", at = @At("RETURN"))
+    public void betterendisland_EndDragonFight(ServerLevel level, long seed, EndDragonFight.Data data, BlockPos origin, CallbackInfo ci) {
+        if (data.isRespawning()) {
             this.betterendisland$dragonRespawnStage = DragonRespawnStage.START;
         }
-        if (tag.contains("FirstExitPortalSpawn")) {
-            this.betterendisland$firstExitPortalSpawn = tag.getBoolean("FirstExitPortalSpawn");
-        } else {
-            this.betterendisland$firstExitPortalSpawn = true;
-        }
-        if (tag.contains("HasDragonEverSpawned")) {
-            this.betterendisland$hasDragonEverSpawned = tag.getBoolean("HasDragonEverSpawned");
-        } else {
-            this.betterendisland$hasDragonEverSpawned = false;
-        }
-        if (tag.contains("NumberTimesDragonKilled")) {
-            this.betterendisland$numberTimesDragonKilled = tag.getInt("NumberTimesDragonKilled");
-        } else {
-            this.betterendisland$numberTimesDragonKilled = 0;
-        }
         this.dragonEvent.setVisible(false);
-    }
-
-    @Inject(method = "saveData", at = @At("RETURN"))
-    public void betterendisland_saveData(CallbackInfoReturnable<CompoundTag> cir) {
-        cir.getReturnValue().putBoolean("FirstExitPortalSpawn", this.betterendisland$firstExitPortalSpawn);
-        cir.getReturnValue().putBoolean("HasDragonEverSpawned", this.betterendisland$hasDragonEverSpawned);
-        cir.getReturnValue().putInt("NumberTimesDragonKilled", this.betterendisland$numberTimesDragonKilled);
     }
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
@@ -187,7 +163,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             BetterEndIslandCommon.LOGGER.info("Tried to reset, but need to find the portal first.");
             this.findExitPortal();
             if (this.portalLocation == null) { // If still null after finding portal, we find it ourselves
-                this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.END_PODIUM_LOCATION).below();
+                this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.getLocation(BlockPos.ZERO)).below();
                 while (this.level.getBlockState(this.portalLocation).is(Blocks.BEDROCK) && this.portalLocation.getY() > this.level.getSeaLevel()) {
                     this.portalLocation = this.portalLocation.below();
                 }
@@ -275,6 +251,12 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
     @Override
     public void betterendisland$clearVanillaPillars() {
+        // Number of obsidian blocks removed.
+        // We will only attempt to fill in holes in the terrain if the number of obsidian blocks removed surpasses a threshold.
+        // That way we only fill in holes in the terrain if the vanilla pillars were removed.
+        // We do this because filling in the holes is a last resort operation that can leave weird artifacts in the terrain.
+        int obsidianRemoved = 0;
+
         // Copy vanilla logic to ensure we get the vanilla pillar logic, not something overwritten via mixin by a mod
         RandomSource randomSource = RandomSource.create(level.getSeed());
         long seed = randomSource.nextLong() & 65535L;
@@ -297,30 +279,36 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                     BlockState blockState = level.getBlockState(pos);
                     if (blockState.is(Blocks.OBSIDIAN) || blockState.is(Blocks.BEDROCK)) {
                         level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+                        if (blockState.is(Blocks.OBSIDIAN)) {
+                            obsidianRemoved++;
+                        }
                     }
                 }
             }
 
-            // Determine surface levels for pillar for filling in space in the island once we remove the spike
-            int offset = radius + 1;
-            int topY = -1;
-            int surfaceY;
-            if ((surfaceY = betterendisland$getSurfacePos(x - offset, z - offset)) > topY) topY = surfaceY;
-            if ((surfaceY = betterendisland$getSurfacePos(x - offset, z + offset)) > topY) topY = surfaceY;
-            if ((surfaceY = betterendisland$getSurfacePos(x + offset, z - offset)) > topY) topY = surfaceY;
-            if ((surfaceY = betterendisland$getSurfacePos(x + offset, z + offset)) > topY) topY = surfaceY;
-            int bottomY = 255;
-            if ((surfaceY = betterendisland$getLowestBlockPos(x - offset, z - offset)) < bottomY) bottomY = surfaceY;
-            if ((surfaceY = betterendisland$getLowestBlockPos(x - offset, z + offset)) < bottomY) bottomY = surfaceY;
-            if ((surfaceY = betterendisland$getLowestBlockPos(x + offset, z - offset)) < bottomY) bottomY = surfaceY;
-            if ((surfaceY = betterendisland$getLowestBlockPos(x + offset, z + offset)) < bottomY) bottomY = surfaceY;
-            if (topY != -1 && bottomY != 255) {
-                for (BlockPos pos : BlockPos.betweenClosed(new BlockPos(x - radius, bottomY, z - radius), new BlockPos(x + radius, topY, z + radius))) {
-                    if (pos.distToLowCornerSqr(x, pos.getY(), z) <= (double)(radius * radius + 1)) {
-                        BlockState blockState = level.getBlockState(pos);
-                        if (blockState.is(Blocks.AIR)) {
-                            if (pos.getY() <= topY && pos.getY() >= bottomY) {
-                                level.setBlockAndUpdate(pos, Blocks.END_STONE.defaultBlockState());
+            // Only fill in holes in terrain if we removed enough obsidian to warrant it
+            if (obsidianRemoved > 10) {
+                // Determine surface levels for pillar for filling in space in the island once we remove the spike
+                int offset = radius + 1;
+                int topY = -1;
+                int surfaceY;
+                if ((surfaceY = betterendisland$getSurfacePos(x - offset, z - offset)) > topY) topY = surfaceY;
+                if ((surfaceY = betterendisland$getSurfacePos(x - offset, z + offset)) > topY) topY = surfaceY;
+                if ((surfaceY = betterendisland$getSurfacePos(x + offset, z - offset)) > topY) topY = surfaceY;
+                if ((surfaceY = betterendisland$getSurfacePos(x + offset, z + offset)) > topY) topY = surfaceY;
+                int bottomY = 255;
+                if ((surfaceY = betterendisland$getLowestBlockPos(x - offset, z - offset)) < bottomY) bottomY = surfaceY;
+                if ((surfaceY = betterendisland$getLowestBlockPos(x - offset, z + offset)) < bottomY) bottomY = surfaceY;
+                if ((surfaceY = betterendisland$getLowestBlockPos(x + offset, z - offset)) < bottomY) bottomY = surfaceY;
+                if ((surfaceY = betterendisland$getLowestBlockPos(x + offset, z + offset)) < bottomY) bottomY = surfaceY;
+                if (topY != -1 && bottomY != 255) {
+                    for (BlockPos pos : BlockPos.betweenClosed(new BlockPos(x - radius, bottomY, z - radius), new BlockPos(x + radius, topY, z + radius))) {
+                        if (pos.distToLowCornerSqr(x, pos.getY(), z) <= (double) (radius * radius + 1)) {
+                            BlockState blockState = level.getBlockState(pos);
+                            if (blockState.is(Blocks.AIR)) {
+                                if (pos.getY() <= topY && pos.getY() >= bottomY) {
+                                    level.setBlockAndUpdate(pos, Blocks.END_STONE.defaultBlockState());
+                                }
                             }
                         }
                     }
@@ -334,8 +322,6 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                     for (int fenceZ = -2; fenceZ <= 2; ++fenceZ) {
                         for (int fenceY = 0; fenceY <= 3; ++fenceY) {
                             if (Mth.abs(fenceX) == 2 || Mth.abs(fenceZ) == 2 || fenceY == 3) {
-                                boolean $$16 = fenceX == -2 || fenceX == 2 || fenceY == 3;
-                                boolean $$17 = fenceZ == -2 || fenceZ == 2 || fenceY == 3;
                                 mutable.set(x + fenceX, height + fenceY, z + fenceZ);
                                 level.setBlockAndUpdate(mutable, Blocks.AIR.defaultBlockState());
                             }
@@ -483,6 +469,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         if (allCrystals.size() != 4) {
             allCrystals = this.betterendisland$checkVanillaRespawnCrystals(portalPos.below(2));
             if (allCrystals.size() != 4) {
+                BetterEndIslandCommon.LOGGER.info("Unable to find all 4 summoning crystals. This shouldn't happen!");
                 return;
             }
         }
@@ -531,7 +518,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     private void betterendisland$spawnPortal(boolean isActive, boolean isBottomOnly) {
         // Find the portal location if it hasn't been found yet
         if (this.portalLocation == null) {
-            this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.END_PODIUM_LOCATION).below();
+            this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.getLocation(BlockPos.ZERO)).below();
             while (this.level.getBlockState(this.portalLocation).is(Blocks.BEDROCK) && this.portalLocation.getY() > this.level.getSeaLevel()) {
                 this.portalLocation = this.portalLocation.below();
             }
@@ -689,12 +676,32 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Override
-    public boolean betterendisland$hasDragonEverSpawned() {
-        return this.betterendisland$hasDragonEverSpawned;
+    public boolean betterendisland$firstExitPortalSpawn() {
+        return betterendisland$firstExitPortalSpawn;
     }
 
     @Override
-    public int betterendisland$getNumberTimesDragonKilled() {
-        return this.betterendisland$numberTimesDragonKilled;
+    public boolean betterendisland$hasDragonEverSpawned() {
+        return betterendisland$hasDragonEverSpawned;
+    }
+
+    @Override
+    public int betterendisland$numTimesDragonKilled() {
+        return betterendisland$numberTimesDragonKilled;
+    }
+
+    @Override
+    public void betterendisland$setFirstExitPortalSpawn(boolean bl) {
+        this.betterendisland$firstExitPortalSpawn = bl;
+    }
+
+    @Override
+    public void betterendisland$setHasDragonEverSpawned(boolean bl) {
+        this.betterendisland$hasDragonEverSpawned = bl;
+    }
+
+    @Override
+    public void betterendisland$setNumTimesDragonKilled(int i) {
+        this.betterendisland$numberTimesDragonKilled = i;
     }
 }

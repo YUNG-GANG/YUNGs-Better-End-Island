@@ -38,8 +38,8 @@ public class BetterEndGatewayFeature {
         EndGatewayConfiguration config = ctx.config();
 
         int numberTimesDragonKilled = 0;
-        if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).betterendisland$getNumberTimesDragonKilled();
+        if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
         }
 
         ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "gateway");

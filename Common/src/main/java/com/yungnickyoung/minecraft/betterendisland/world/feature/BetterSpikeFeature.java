@@ -78,8 +78,8 @@ public class BetterSpikeFeature {
         Rotation rotation = Rotation.getRandom(rand);
 
         int numberTimesDragonKilled = 0;
-        if (level instanceof ServerLevel serverLevel && serverLevel.dragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.dragonFight()).betterendisland$getNumberTimesDragonKilled();
+        if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
+            numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
         }
 
         // Place top part

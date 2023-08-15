@@ -8,6 +8,7 @@
     "EndergeticExpansionMixins",
     "EndGatewayFeatureMixin",
     "EndSpikeMixin",
+    "PrimaryLevelDataMixin",
     "ServerLevelMixin",
     "ServerPlayerMixin",
     "SpikeFeatureMixin",
