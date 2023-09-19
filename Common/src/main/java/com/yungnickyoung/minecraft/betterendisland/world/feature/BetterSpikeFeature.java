@@ -14,7 +14,6 @@ import com.yungnickyoung.minecraft.yungsapi.world.BlockStateRandomizer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -29,6 +28,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,20 +61,20 @@ public class BetterSpikeFeature {
     );
 
     public static List<SpikeFeature.EndSpike> getSpikesForLevel(WorldGenLevel level) {
-        RandomSource randomSource = RandomSource.create(level.getSeed());
-        long seed = randomSource.nextLong() & 65535L;
+        Random random = new Random(level.getSeed());
+        long seed = random.nextLong() & 65535L;
         return SPIKE_CACHE.getUnchecked(seed);
     }
 
-    public static void placeSpike(ServerLevelAccessor level, RandomSource randomSource, SpikeConfiguration config, SpikeFeature.EndSpike spike, boolean isInitialSpawn) {
+    public static void placeSpike(ServerLevelAccessor level, Random random, SpikeConfiguration config, SpikeFeature.EndSpike spike, boolean isInitialSpawn) {
         // Choose templates based on spike and config.
         // First template ID is the top part, second is the bottom part.
-        Pair<ResourceLocation, ResourceLocation> templates = chooseTemplates(spike, isInitialSpawn, randomSource.nextFloat() < 0.2f);
+        Pair<ResourceLocation, ResourceLocation> templates = chooseTemplates(spike, isInitialSpawn, random.nextFloat() < 0.2f);
 
         // Use different random to ensure rotation for a given spike is same every fight
         long seed = 0;
         if (level instanceof WorldGenLevel) seed = ((WorldGenLevel) level).getSeed();
-        RandomSource rand = RandomSource.create(seed ^ spike.getCenterX() ^ spike.getCenterZ());
+        Random rand = new Random(seed ^ spike.getCenterX() ^ spike.getCenterZ());
         Rotation rotation = Rotation.getRandom(rand);
 
         int numberTimesDragonKilled = 0;
@@ -85,14 +85,14 @@ public class BetterSpikeFeature {
         // Place top part
         int topY = BetterEndIslandCommon.betterEnd ? 70 : 60;
         BlockPos centerPos = new BlockPos(spike.getCenterX(), topY, spike.getCenterZ());
-        if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getFirst(), numberTimesDragonKilled)) {
+        if (!placeTemplate(level, random, centerPos, rotation, templates.getFirst(), numberTimesDragonKilled)) {
             BetterEndIslandCommon.LOGGER.error("Unable to place top spike at {}. This shouldn't happen!", centerPos);
             return;
         }
 
         // Place bottom part
         centerPos = centerPos.below(67);
-        if (!placeTemplate(level, randomSource, centerPos, rotation, templates.getSecond(), numberTimesDragonKilled)) {
+        if (!placeTemplate(level, random, centerPos, rotation, templates.getSecond(), numberTimesDragonKilled)) {
             BetterEndIslandCommon.LOGGER.error("Unable to place bottom spike at {}. This shouldn't happen!", centerPos);
             return;
         }
@@ -103,7 +103,7 @@ public class BetterSpikeFeature {
             endCrystal.setBeamTarget(config.getCrystalBeamTarget());
             endCrystal.setInvulnerable(config.isCrystalInvulnerable());
             int crystalY = topY + ((IEndSpike)spike).betterendisland$getCrystalYOffset();
-            endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
+            endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, random.nextFloat() * 360.0F, 0.0F);
             level.addFreshEntity(endCrystal);
             level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.BEDROCK.defaultBlockState(), 3);
         }
@@ -123,7 +123,7 @@ public class BetterSpikeFeature {
         return new Pair<>(new ResourceLocation(BetterEndIslandCommon.MOD_ID, topName), new ResourceLocation(BetterEndIslandCommon.MOD_ID, bottomName));
     }
 
-    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
+    private static boolean placeTemplate(ServerLevelAccessor level, Random random, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
@@ -138,7 +138,7 @@ public class BetterSpikeFeature {
         structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(rotation);
         structurePlaceSettings.setRotationPivot(new BlockPos(9, 0, 9));
-        template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
+        template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, random, 2);
         return true;
     }
 }

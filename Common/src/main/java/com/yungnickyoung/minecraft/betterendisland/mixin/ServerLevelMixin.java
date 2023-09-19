@@ -28,7 +28,7 @@ public abstract class ServerLevelMixin extends Level {
     @Shadow @Nullable public abstract EndDragonFight dragonFight();
 
     protected ServerLevelMixin(WritableLevelData $$0, ResourceKey<Level> $$1, Holder<DimensionType> $$2, Supplier<ProfilerFiller> $$3, boolean $$4, boolean $$5, long $$6, int $$7) {
-        super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7);
+        super($$0, $$1, $$2, $$3, $$4, $$5, $$6);
     }
 
     @Unique ResourceLocation END_DIMENSION = new ResourceLocation("minecraft", "the_end");

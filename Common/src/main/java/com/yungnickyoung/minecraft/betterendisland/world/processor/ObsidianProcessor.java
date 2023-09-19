@@ -7,7 +7,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -17,6 +16,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProc
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import javax.annotation.ParametersAreNonnullByDefault;
+import java.util.Random;
 
 /**
  * Replaces obsidian with crying obsidian based on number of times dragon has been killed.
@@ -43,7 +43,7 @@ public class ObsidianProcessor extends StructureProcessor {
                                                              StructureTemplate.StructureBlockInfo blockInfoGlobal,
                                                              StructurePlaceSettings structurePlacementData) {
         if (blockInfoGlobal.state.is(Blocks.OBSIDIAN)) {
-            RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos);
+            Random random = structurePlacementData.getRandom(blockInfoGlobal.pos);
             BlockState outputState = Blocks.OBSIDIAN.defaultBlockState();
             int dragonKills = Mth.clamp(this.numberTimesDragonKilled, 0, 10);
             float cryingChance = Mth.lerp(dragonKills / 10f, 0f, 0.5f);

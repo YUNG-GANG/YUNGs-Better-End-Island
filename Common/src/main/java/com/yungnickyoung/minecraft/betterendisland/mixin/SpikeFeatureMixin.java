@@ -2,7 +2,6 @@ package com.yungnickyoung.minecraft.betterendisland.mixin;
 
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterSpikeFeature;
 import net.minecraft.server.level.WorldGenRegion;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
@@ -14,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.List;
+import java.util.Random;
 
 @Mixin(SpikeFeature.class)
 public abstract class SpikeFeatureMixin {
@@ -23,8 +23,8 @@ public abstract class SpikeFeatureMixin {
     }
 
     @Inject(method = "placeSpike", at = @At("HEAD"), cancellable = true)
-    private void betterendisland_placeSpike(ServerLevelAccessor level, RandomSource randomSource, SpikeConfiguration config, SpikeFeature.EndSpike spike, CallbackInfo ci) {
-        BetterSpikeFeature.placeSpike(level, randomSource, config, spike, level instanceof WorldGenRegion);
+    private void betterendisland_placeSpike(ServerLevelAccessor level, Random random, SpikeConfiguration config, SpikeFeature.EndSpike spike, CallbackInfo ci) {
+        BetterSpikeFeature.placeSpike(level, random, config, spike, level instanceof WorldGenRegion);
         ci.cancel();
     }
 }

@@ -7,7 +7,6 @@ import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProce
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * A replacement of vanilla's obsidian spawn platform that uses structure randomized structure templates.
@@ -33,10 +33,10 @@ public class BetterEndSpawnPlatformFeature {
             numberTimesDragonKilled = ((IDragonFight) level.dragonFight()).betterendisland$getNumberTimesDragonKilled();
         }
         ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "spawn_platform");
-        return placeTemplate(level, RandomSource.create(), origin, template, numberTimesDragonKilled);
+        return placeTemplate(level, new Random(), origin, template, numberTimesDragonKilled);
     }
 
-    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, ResourceLocation id, int numberTimesDragonKilled) {
+    private static boolean placeTemplate(ServerLevelAccessor level, Random random, BlockPos centerPos, ResourceLocation id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
@@ -51,7 +51,7 @@ public class BetterEndSpawnPlatformFeature {
         structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(Rotation.NONE); // Structure is radially symmetrical so rotation doesn't matter
         structurePlaceSettings.setRotationPivot(new BlockPos(3, 0, 3));
-        template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
+        template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, random, 2);
         return true;
     }
 }

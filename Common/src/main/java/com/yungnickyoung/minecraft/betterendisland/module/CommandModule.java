@@ -8,5 +8,5 @@ import com.yungnickyoung.minecraft.yungsapi.api.autoregister.AutoRegisterCommand
 @AutoRegister(BetterEndIslandCommon.MOD_ID)
 public class CommandModule {
     @AutoRegister("end_island")
-    public static final AutoRegisterCommand END_ISLAND_COMMAND = AutoRegisterCommand.of(EndIslandCommand::register);
+    public static final AutoRegisterCommand END_ISLAND_COMMAND = AutoRegisterCommand.of(() -> EndIslandCommand::register);
 }

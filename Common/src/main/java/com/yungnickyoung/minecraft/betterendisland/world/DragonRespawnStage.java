@@ -1,13 +1,13 @@
 package com.yungnickyoung.minecraft.betterendisland.world;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.serialization.Codec;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.Explosion;
@@ -18,7 +18,11 @@ import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 public enum DragonRespawnStage implements StringRepresentable {
     START("start") {
@@ -87,7 +91,7 @@ public enum DragonRespawnStage implements StringRepresentable {
 
                         // Place new spike
                         SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), new BlockPos(0, 128, 0));
-                        Feature.END_SPIKE.place(spikeConfig, level, level.getChunkSource().getGenerator(), RandomSource.create(), new BlockPos(spike.getCenterX(), 45, spike.getCenterZ()));
+                        Feature.END_SPIKE.place(spikeConfig, level, level.getChunkSource().getGenerator(), new Random(), new BlockPos(spike.getCenterX(), 45, spike.getCenterZ()));
                     }
                 } else if (isFirstTickForSpike) {
                     ((IDragonFight) dragonFight).betterendisland$setDragonRespawnStage(SUMMONING_DRAGON);
@@ -125,11 +129,17 @@ public enum DragonRespawnStage implements StringRepresentable {
         }
     };
 
-    public static final StringRepresentable.EnumCodec<DragonRespawnStage> CODEC = StringRepresentable.fromEnum(DragonRespawnStage::values);
+    public static final Codec<DragonRespawnStage> CODEC = StringRepresentable.fromEnum(DragonRespawnStage::values, DragonRespawnStage::byName);
+
+    private static final Map<String, DragonRespawnStage> BY_NAME = Arrays.stream(values()).collect(Collectors.toMap(DragonRespawnStage::getName, ($$0) -> $$0));
 
     @Nullable
     public static DragonRespawnStage byName(@Nullable String name) {
-        return CODEC.byName(name);
+        return BY_NAME.get(name);
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     private final String name;

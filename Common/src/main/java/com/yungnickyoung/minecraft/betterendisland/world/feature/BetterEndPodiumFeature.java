@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -25,6 +24,7 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * A replacement of vanilla's EndPodiumFeature that uses a customized structure template.
@@ -61,7 +61,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
 
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
         ServerLevelAccessor level = ctx.level();
-        RandomSource randomSource = ctx.random();
+        Random random = ctx.random();
         BlockPos pos = ctx.origin();
 
         int numberTimesDragonKilled = 0;
@@ -71,7 +71,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
 
         // Choose and place template
         ResourceLocation template = chooseTemplate();
-        boolean placed = placeTemplate(level, randomSource, pos, Rotation.NONE, template, numberTimesDragonKilled);
+        boolean placed = placeTemplate(level, random, pos, Rotation.NONE, template, numberTimesDragonKilled);
 
         // Place crystals on initial spawn
         if (this.isInitialSpawn) {
@@ -97,7 +97,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         return new ResourceLocation(BetterEndIslandCommon.MOD_ID, towerName);
     }
 
-    private boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
+    private boolean placeTemplate(ServerLevelAccessor level, Random randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);

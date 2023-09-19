@@ -12,9 +12,6 @@ import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndPodiumFeature;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndSpawnPlatformFeature;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterSpikeFeature;
-import it.unimi.dsi.fastutil.ints.IntArrayList;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.Util;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +24,6 @@ import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
 import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -58,8 +54,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Mixin(EndDragonFight.class)
@@ -91,7 +90,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
     @Shadow private int crystalsAlive;
     @Shadow @Nullable private DragonRespawnAnimation respawnStage;
-    @Shadow @Final private ObjectArrayList<Integer> gateways;
+    @Shadow @Final private List<Integer> gateways;
 
     @Unique private DragonRespawnStage betterendisland$dragonRespawnStage;
     @Unique private boolean betterendisland$firstExitPortalSpawn = true;
@@ -232,7 +231,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         // Reset tower to initial state w/ summoning crystals
         BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(true, false, false);
         BlockPos spawnPos = portalPos.below(5);
-        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), new Random(), spawnPos);
 
         // Get rid of vanilla spikes in case they're there
         this.betterendisland$clearVanillaPillars();
@@ -250,7 +249,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
             // Place new spike
             SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), null);
-            BetterSpikeFeature.placeSpike(level, RandomSource.create(), spikeConfig, spike, true);
+            BetterSpikeFeature.placeSpike(level, new Random(), spikeConfig, spike, true);
         });
 
         // Reset spawn playform to initial state
@@ -270,15 +269,17 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         // Reset gateways var
         this.gateways.clear();
         this.gateways.addAll(ContiguousSet.create(Range.closedOpen(0, 20), DiscreteDomain.integers()));
-        Util.shuffle(this.gateways, RandomSource.create(this.level.getSeed()));
+        Collections.shuffle(this.gateways, new Random(this.level.getSeed()));
     }
 
     @Override
     public void betterendisland$clearVanillaPillars() {
         // Copy vanilla logic to ensure we get the vanilla pillar logic, not something overwritten via mixin by a mod
-        RandomSource randomSource = RandomSource.create(level.getSeed());
-        long seed = randomSource.nextLong() & 65535L;
-        IntArrayList indexes = Util.toShuffledList(IntStream.range(0, 10), RandomSource.create(seed));
+        Random random = new Random(level.getSeed());
+        long seed = random.nextLong() & 65535L;
+        List<Integer> indexes = IntStream.range(0, 10).boxed().collect(Collectors.toList());
+        Collections.shuffle(indexes, new Random(seed));
+
         for (int i = 0; i < 10; ++i) {
             int x = Mth.floor(42.0D * Math.cos(2.0D * (-Math.PI + (Math.PI / 10D) * (double)i)));
             int z = Mth.floor(42.0D * Math.sin(2.0D * (-Math.PI + (Math.PI / 10D) * (double)i)));
@@ -541,7 +542,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
         BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(this.betterendisland$firstExitPortalSpawn, isBottomOnly, isActive);
         BlockPos spawnPos = this.portalLocation.below(5);
-        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), new Random(), spawnPos);
         this.betterendisland$firstExitPortalSpawn = false;
     }
 
@@ -638,7 +639,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                     int x = Mth.floor(96.0D * Math.cos(2.0D * (-Math.PI + 0.15707963267948966D * (double) gateway)));
                     int z = Mth.floor(96.0D * Math.sin(2.0D * (-Math.PI + 0.15707963267948966D * (double) gateway)));
                     BlockPos gatewayPos = new BlockPos(x, 75, z);
-                    RandomSource gatewayRandom = RandomSource.create(Mth.getSeed(gatewayPos));
+                    Random gatewayRandom = new Random(Mth.getSeed(gatewayPos));
                     BlockPos.betweenClosed(gatewayPos.offset(-1, -4, -1), gatewayPos.offset(1, 4, 1)).forEach(pos -> {
                         if (level.getBlockState(pos).is(Blocks.OBSIDIAN) && gatewayRandom.nextFloat() < cryingChance) {
                             this.level.setBlockAndUpdate(pos, Blocks.CRYING_OBSIDIAN.defaultBlockState());
@@ -648,7 +649,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
                 // Update obsidian -> crying obsidian on spawn platform
                 BlockPos platformPos = ServerLevel.END_SPAWN_POINT;
-                RandomSource platformRandom = RandomSource.create(Mth.getSeed(platformPos));
+                Random platformRandom = new Random(Mth.getSeed(platformPos));
                 BlockPos.betweenClosed(platformPos.offset(-3, -15, -3), platformPos.offset(3, 4, 3)).forEach(pos -> {
                     if (level.getBlockState(pos).is(Blocks.OBSIDIAN) && platformRandom.nextFloat() < cryingChance) {
                         this.level.setBlockAndUpdate(pos, Blocks.CRYING_OBSIDIAN.defaultBlockState());
