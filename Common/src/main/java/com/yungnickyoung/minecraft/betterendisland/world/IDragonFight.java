@@ -5,7 +5,7 @@ public interface IDragonFight {
     DragonRespawnStage betterendisland$getDragonRespawnStage();
     void betterendisland$initialRespawn();
     void betterendisland$tickBellSound();
-    void betterendisland$reset();
+    void betterendisland$reset(boolean forcePortalPosReset);
     void betterendisland$clearVanillaPillars();
     boolean betterendisland$firstExitPortalSpawn();
     void betterendisland$setFirstExitPortalSpawn(boolean bl);

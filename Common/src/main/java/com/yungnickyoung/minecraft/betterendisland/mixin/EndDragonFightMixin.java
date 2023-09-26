@@ -40,8 +40,6 @@ import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
@@ -151,7 +149,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Override
-    public void betterendisland$reset() {
+    public void betterendisland$reset(boolean forcePortalPosReset) {
         // Kill dragon if exists
         List<? extends EnderDragon> dragons = this.level.getDragons();
         dragons.forEach(EnderDragon::discard);
@@ -159,13 +157,29 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         this.dragonEvent.setVisible(false);
 
         // Get portal pos
-        if (this.portalLocation == null) {
+        if (this.portalLocation == null || this.portalLocation.getY() < 5 || forcePortalPosReset) {
             BetterEndIslandCommon.LOGGER.info("Tried to reset, but need to find the portal first.");
+            if (this.portalLocation == null) {
+                BetterEndIslandCommon.LOGGER.info("Portal location is currently null.");
+            } else if (this.portalLocation.getY() < 5) {
+                BetterEndIslandCommon.LOGGER.info("Portal location is currently too low: {}", this.portalLocation.getY());
+            } else {
+                BetterEndIslandCommon.LOGGER.info("Forcing portal position reset...");
+            }
             this.findExitPortal();
-            if (this.portalLocation == null) { // If still null after finding portal, we find it ourselves
-                this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.getLocation(BlockPos.ZERO)).below();
+            if (this.portalLocation == null || this.portalLocation.getY() < 5 || forcePortalPosReset) { // If still null after finding portal, we find it ourselves
+                if (this.portalLocation == null) {
+                    BetterEndIslandCommon.LOGGER.info("Portal location is still null. Placing manually...");
+                } else if (this.portalLocation.getY() < 5) {
+                    BetterEndIslandCommon.LOGGER.info("Portal location is still too low: {}. Placing manually...", this.portalLocation.getY());
+                }
+                this.portalLocation = new BlockPos(0, this.betterendisland$getSurfacePos(0, 0), 0);
                 while (this.level.getBlockState(this.portalLocation).is(Blocks.BEDROCK) && this.portalLocation.getY() > this.level.getSeaLevel()) {
                     this.portalLocation = this.portalLocation.below();
+                }
+                if (this.portalLocation.getY() < 5) {
+                    BetterEndIslandCommon.LOGGER.info("Portal was still placed too low! Force placing at y=65...");
+                    this.portalLocation = new BlockPos(this.portalLocation.getX(), 65, this.portalLocation.getZ());
                 }
             }
         }
@@ -518,10 +532,19 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     @Unique
     private void betterendisland$spawnPortal(boolean isActive, boolean isBottomOnly) {
         // Find the portal location if it hasn't been found yet
-        if (this.portalLocation == null) {
-            this.portalLocation = this.level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, EndPodiumFeature.getLocation(BlockPos.ZERO)).below();
+        if (this.portalLocation == null || this.portalLocation.getY() < 5) {
+            if (this.portalLocation == null) {
+                BetterEndIslandCommon.LOGGER.info("Portal location is null. Placing manually...");
+            } else {
+                BetterEndIslandCommon.LOGGER.info("Portal location is too low: {}. Placing manually...", this.portalLocation.getY());
+            }
+            this.portalLocation = new BlockPos(0, this.betterendisland$getSurfacePos(0, 0), 0);
             while (this.level.getBlockState(this.portalLocation).is(Blocks.BEDROCK) && this.portalLocation.getY() > this.level.getSeaLevel()) {
                 this.portalLocation = this.portalLocation.below();
+            }
+            if (this.portalLocation.getY() < 5) {
+                BetterEndIslandCommon.LOGGER.info("Portal was placed too low! Force placing at y=65...");
+                this.portalLocation = new BlockPos(this.portalLocation.getX(), 65, this.portalLocation.getZ());
             }
         }
 
