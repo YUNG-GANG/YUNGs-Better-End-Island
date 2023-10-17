@@ -114,7 +114,7 @@ task publishCurseForgeFabric(type: net.darkhax.curseforgegradle.TaskPublishCurse
     mainFile.releaseType = 'release'
     mainFile.addRequirement('yungs-api-fabric')
     mainFile.addRequirement('fabric-api')
-    mainFile.addRequirement('cloth-config')
+//    mainFile.addRequirement('cloth-config')
     mainFile.addOptional('modmenu')
     mainFile.displayName = "[${mc_version}] ${mod_full_name} v${modVersion} (Fabric)"
     compatibleVersions.each { version ->
@@ -139,7 +139,7 @@ modrinth {
         // The type can either be `project` or `version`
         required.project "yungs-api"
         required.project "fabric-api"
-        required.project "cloth-config"
+//        required.project "cloth-config"
         optional.project "modmenu"
     }
 }
