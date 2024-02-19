@@ -1,7 +1,7 @@
 plugins {
-    id 'fabric-loom' version '1.2-SNAPSHOT'
+    id 'fabric-loom' version '1.5-SNAPSHOT'
     id 'idea'
-    id 'net.darkhax.curseforgegradle' version "${cursegradle_version}"
+    id 'net.darkhax.curseforgegradle' version "${curseforgegradle_version}"
     id 'com.modrinth.minotaur' version '2.+'
 }
 
@@ -38,7 +38,7 @@ dependencies {
 //    modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version_fabric}"
 
     // ModMenu
-//    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version_fabric}") { transitive = false }
+    modImplementation("com.terraformersmc:modmenu:${project.modmenu_version_fabric}") { transitive = false }
 
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
     compileOnly project(":Common")

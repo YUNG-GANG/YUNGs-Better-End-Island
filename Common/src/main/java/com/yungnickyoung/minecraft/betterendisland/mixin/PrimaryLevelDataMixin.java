@@ -1,6 +1,5 @@
 package com.yungnickyoung.minecraft.betterendisland.mixin;
 
-import com.mojang.datafixers.DataFixer;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.Lifecycle;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
@@ -12,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.world.level.LevelSettings;
 import net.minecraft.world.level.levelgen.WorldOptions;
-import net.minecraft.world.level.storage.LevelVersion;
 import net.minecraft.world.level.storage.PrimaryLevelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -26,7 +24,7 @@ public class PrimaryLevelDataMixin implements IPrimaryLevelData {
     @Unique private ExtraFightData betterendisland$endDragonFightData = ExtraFightData.DEFAULT;
 
     @Inject(method = "parse", at = @At("RETURN"))
-    private static <T> void betterendisland_attachExtraFightData1(Dynamic<T> dynamic, DataFixer $$1, int $$2, CompoundTag $$3, LevelSettings $$4, LevelVersion $$5, PrimaryLevelData.SpecialWorldProperty $$6, WorldOptions $$7, Lifecycle $$8, CallbackInfoReturnable<PrimaryLevelData> cir) {
+    private static <T> void betterendisland_attachExtraFightData1(Dynamic<T> dynamic, LevelSettings $$1, PrimaryLevelData.SpecialWorldProperty $$2, WorldOptions $$3, Lifecycle $$4, CallbackInfoReturnable<PrimaryLevelData> cir) {
         PrimaryLevelData data = cir.getReturnValue();
         ExtraFightData extraFightData = dynamic.get("bei_ExtraDragonFight")
                 .read(ExtraFightData.CODEC)
