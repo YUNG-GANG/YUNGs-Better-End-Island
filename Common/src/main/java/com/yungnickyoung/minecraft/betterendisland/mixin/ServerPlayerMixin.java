@@ -1,5 +1,6 @@
 package com.yungnickyoung.minecraft.betterendisland.mixin;
 
+import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndSpawnPlatformFeature;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -13,7 +14,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ServerPlayerMixin {
     @Inject(method = "createEndPlatform", at = @At("HEAD"), cancellable = true)
     private void betterendisland_createEndPlatform(ServerLevel level, BlockPos pos, CallbackInfo ci) {
-        BetterEndSpawnPlatformFeature.place(level, pos);
-        ci.cancel();
+        if (!BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform) {
+            BetterEndSpawnPlatformFeature.place(level, pos);
+            ci.cancel();
+        }
     }
 }
