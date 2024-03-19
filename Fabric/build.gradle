@@ -35,7 +35,7 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}+${mc_version}"
 
     // ClothConfig
-//    modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version_fabric}"
+    modImplementation "me.shedaniel.cloth:cloth-config-fabric:${project.clothconfig_version_fabric}"
 
     // ModMenu
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version_fabric}") { transitive = false }
@@ -73,16 +73,20 @@ processResources {
     inputs.property "mod_id", project.mod_id
     inputs.property "fabric_version", project.fabric_version
     inputs.property "fabric_loader_version", project.fabric_loader_version
+    inputs.property "clothconfig_version_fabric", project.clothconfig_version_fabric
+    inputs.property "modmenu_version_fabric", project.modmenu_version_fabric
 
     filesMatching("fabric.mod.json") {
         expand "version": project.version,
                 "yungsapi_version": project.yungsapi_version,
-                mc_version: project.mc_version,
+                "mc_version": project.mc_version,
                 "mod_description": project.mod_description,
                 "mod_full_name": project.mod_full_name,
                 "mod_id": project.mod_id,
                 "fabric_version": project.fabric_version,
-                "fabric_loader_version": project.fabric_loader_version
+                "fabric_loader_version": project.fabric_loader_version,
+                "clothconfig_version_fabric": project.clothconfig_version_fabric,
+                "modmenu_version_fabric": project.modmenu_version_fabric
     }
 }
 
@@ -114,7 +118,7 @@ task publishCurseForgeFabric(type: net.darkhax.curseforgegradle.TaskPublishCurse
     mainFile.releaseType = 'release'
     mainFile.addRequirement('yungs-api-fabric')
     mainFile.addRequirement('fabric-api')
-//    mainFile.addRequirement('cloth-config')
+    mainFile.addRequirement('cloth-config')
     mainFile.addOptional('modmenu')
     mainFile.displayName = "[${mc_version}] ${mod_full_name} v${modVersion} (Fabric)"
     compatibleVersions.each { version ->
@@ -139,7 +143,7 @@ modrinth {
         // The type can either be `project` or `version`
         required.project "yungs-api"
         required.project "fabric-api"
-//        required.project "cloth-config"
+        required.project "cloth-config"
         optional.project "modmenu"
     }
 }

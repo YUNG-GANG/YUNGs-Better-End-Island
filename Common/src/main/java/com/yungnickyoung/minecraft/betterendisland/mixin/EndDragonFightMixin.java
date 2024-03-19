@@ -586,7 +586,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             this.betterendisland$spawnPortal(true, true);
             level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             this.spawnNewGateway();
-            if (!this.previouslyKilled || BetterEndIslandCommon.moreDragonEggs) {
+            if (!this.previouslyKilled || BetterEndIslandCommon.moreDragonEggs || BetterEndIslandCommon.CONFIG.resummonedDragonDropsEgg) {
                 this.level.setBlockAndUpdate(this.portalLocation.above(), Blocks.DRAGON_EGG.defaultBlockState());
             }
 

@@ -20,6 +20,9 @@
   "entrypoints": {
     "main": [
       "com.yungnickyoung.minecraft.betterendisland.BetterEndIslandFabric"
+    ],
+    "modmenu": [
+      "com.yungnickyoung.minecraft.betterendisland.config.gui.BEIModMenu"
     ]
   },
   "mixins": [
@@ -30,8 +33,12 @@
     "fabricloader": ">=${fabric_loader_version}",
     "fabric": ">=${fabric_version}",
     "minecraft": ">=${mc_version}",
+    "cloth-config2": ">=${clothconfig_version_fabric}",
     "java": ">=17",
     "yungsapi": ">=${mc_version}-Fabric-${yungsapi_version}"
+  },
+  "suggests": {
+    "modmenu": ">=${modmenu_version_fabric}"
   },
   "custom": {
     "catalogue": {
