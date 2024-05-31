@@ -10,5 +10,5 @@ public class ConfigGeneralFabric {
     public boolean useVanillaSpawnPlatform = false;
 
     @ConfigEntry.Gui.Tooltip
-    public boolean regenerateTowerOnDragonDeath = false;
+    public boolean regenerateTowerOnDragonDeath = true;
 }

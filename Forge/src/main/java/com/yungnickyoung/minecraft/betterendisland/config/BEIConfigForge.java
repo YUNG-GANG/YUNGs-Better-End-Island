@@ -29,7 +29,7 @@ public class BEIConfigForge {
                 .comment(
                         " Whether the tower building surrounding the end podium should be regenerated on subsequent dragon kills. \n" +
                         " Default: false")
-                .define("Regenerate End Podium Tower", false);
+                .define("Regenerate End Podium Tower", true);
 
         BUILDER.pop();
         SPEC = BUILDER.build();
