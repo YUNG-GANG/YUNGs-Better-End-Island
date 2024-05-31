@@ -8,6 +8,7 @@ public class BEIConfigForge {
 
     public static final ForgeConfigSpec.ConfigValue<Boolean> resummonedDragonDropsEgg;
     public static final ForgeConfigSpec.ConfigValue<Boolean> useVanillaSpawnPlatform;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> regenerateTowerOnDragonDeath;
 
     static {
         BUILDER.push("YUNG's Better End Island");
@@ -23,6 +24,12 @@ public class BEIConfigForge {
                         " Whether the vanilla obsidian platform should spawn in the End instead of the revamped platform.\n" +
                         " Default: false")
                 .define("Spawn Vanilla Obsidian Platform", false);
+
+        regenerateTowerOnDragonDeath = BUILDER
+                .comment(
+                        " Whether the tower building surrounding the end podium should be regenerated on subsequent dragon kills. \n" +
+                        " Default: false")
+                .define("Regenerate End Podium Tower", false);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

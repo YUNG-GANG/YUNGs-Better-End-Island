@@ -382,7 +382,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             BetterEndIslandCommon.LOGGER.info("Found that the dragon has not yet been killed in this world.");
             this.previouslyKilled = false;
             if (this.findExitPortal() == null) {
-                this.betterendisland$spawnPortal(false, false);
+                this.betterendisland$spawnPortal(false, false, true);
             }
         }
 
@@ -432,8 +432,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 BlockPattern.BlockPatternMatch portalPatternMatch = this.findExitPortal();
                 if (portalPatternMatch == null) {
                     BetterEndIslandCommon.LOGGER.info("Couldn't find a portal, so we made one.");
-                    this.betterendisland$spawnPortal(false, false);
-                    this.betterendisland$spawnPortal(true, true); // Place open, active bottom after spawning tower
+                    this.betterendisland$spawnPortal(false, false, true);
+                    this.betterendisland$spawnPortal(true, true, true); // Place open, active bottom after spawning tower
                 } else {
                     BetterEndIslandCommon.LOGGER.info("Found the exit portal & saved its location for next time.");
                 }
@@ -470,8 +470,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
             BlockPattern.BlockPatternMatch portalPatternMatch = this.findExitPortal();
             if (portalPatternMatch == null) {
                 BetterEndIslandCommon.LOGGER.info("Couldn't find a portal, so we made one.");
-                this.betterendisland$spawnPortal(false, false);
-                this.betterendisland$spawnPortal(true, true); // Place open, active bottom after spawning tower
+                this.betterendisland$spawnPortal(false, false, true);
+                this.betterendisland$spawnPortal(true, true, true); // Place open, active bottom after spawning tower
             } else {
                 BetterEndIslandCommon.LOGGER.info("Found the exit portal & saved its location for next time.");
             }
@@ -530,7 +530,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
     }
 
     @Unique
-    private void betterendisland$spawnPortal(boolean isActive, boolean isBottomOnly) {
+    private void betterendisland$spawnPortal(boolean isActive, boolean isBottomOnly, boolean regenerateTemple) {
         // Find the portal location if it hasn't been found yet
         if (this.portalLocation == null || this.portalLocation.getY() < 5) {
             if (this.portalLocation == null) {
@@ -550,9 +550,32 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
         BetterEndIslandCommon.LOGGER.info("Set the exit portal location to: {}", this.portalLocation);
 
-        BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(this.betterendisland$firstExitPortalSpawn, isBottomOnly, isActive);
-        BlockPos spawnPos = this.portalLocation.below(5);
-        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+        // If the dragon has never been killed, place the structure regardless of config settings.
+        if(!this.previouslyKilled || regenerateTemple){
+            BetterEndIslandCommon.LOGGER.info("Placing End Tower");
+            BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(this.betterendisland$firstExitPortalSpawn, isBottomOnly, isActive);
+            BlockPos spawnPos = this.portalLocation.below(5);
+            endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+        } else {
+            if(isActive && !this.hasActiveExitPortal()) {
+                BetterEndIslandCommon.LOGGER.info("Activating exit portal");
+                BlockPos portalLocation = this.portalLocation.below(3);
+
+                // End portal block x/y coordinate pattern relative to a bedrock center at 0,0
+                int[][] portalPattern = {
+                        {-1, 2}, {0, 2}, {1, 2},
+                        {-2, 1}, {-1, 1}, {0, 1}, {1, 1}, {2, 1},
+                        {-2, 0}, {-1, 0}, {1, 0}, {2, 0},
+                        {-2, -1}, {-1, -1}, {0, -1}, {1, -1}, {2, -1},
+                        {-1, -2}, {0, -2}, {1, -2}
+                };
+
+                for (int[] offset : portalPattern) {
+                    BlockPos pos = portalLocation.offset(offset[0], 0, offset[1]);
+                    this.level.setBlockAndUpdate(pos, Blocks.END_PORTAL.defaultBlockState());
+                }
+            }
+        }
         this.betterendisland$firstExitPortalSpawn = false;
     }
 
@@ -583,10 +606,10 @@ public abstract class EndDragonFightMixin implements IDragonFight {
         if (dragon.getUUID().equals(this.dragonUUID)) {
             this.dragonEvent.setProgress(0.0F);
             this.dragonEvent.setVisible(false);
-            this.betterendisland$spawnPortal(true, true);
+            this.betterendisland$spawnPortal(true, true, BetterEndIslandCommon.CONFIG.regenerateTowerOnDragonDeath);
             level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             this.spawnNewGateway();
-            if (!this.previouslyKilled || BetterEndIslandCommon.moreDragonEggs || BetterEndIslandCommon.CONFIG.resummonedDragonDropsEgg) {
+            if (!this.previouslyKilled || BetterEndIslandCommon.moreDragonEggs) {
                 this.level.setBlockAndUpdate(this.portalLocation.above(), Blocks.DRAGON_EGG.defaultBlockState());
             }
 
@@ -626,7 +649,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 }
 
                 // Place broken tower w/ explosion effects
-                this.betterendisland$spawnPortal(false, false);
+                this.betterendisland$spawnPortal(false, false, BetterEndIslandCommon.CONFIG.regenerateTowerOnDragonDeath);
                 level.explode(null, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
                 level.players().forEach(player -> {
                     level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
@@ -636,7 +659,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 });
                 // Place open, inactive bottom if we're not transitioning from an initial tower
                 if (this.betterendisland$hasDragonEverSpawned) {
-                    this.betterendisland$spawnPortal(false, true);
+                    this.betterendisland$spawnPortal(false, true, BetterEndIslandCommon.CONFIG.regenerateTowerOnDragonDeath);
                     level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
                 }
 

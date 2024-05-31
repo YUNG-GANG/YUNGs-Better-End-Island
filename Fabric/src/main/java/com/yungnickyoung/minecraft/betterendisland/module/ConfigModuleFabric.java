@@ -23,5 +23,6 @@ public class ConfigModuleFabric {
     private static void bakeConfig(BEIConfigFabric configFabric) {
         BetterEndIslandCommon.CONFIG.resummonedDragonDropsEgg = configFabric.general.resummonedDragonDropsEgg;
         BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform = configFabric.general.useVanillaSpawnPlatform;
+        BetterEndIslandCommon.CONFIG.regenerateTowerOnDragonDeath = configFabric.general.regenerateTowerOnDragonDeath;
     }
 }
