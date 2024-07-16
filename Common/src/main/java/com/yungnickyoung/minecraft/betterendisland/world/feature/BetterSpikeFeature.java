@@ -120,7 +120,10 @@ public class BetterSpikeFeature {
         // This doesn't really belong here, but it's the easiest way to do it.
         ((IEndSpike) spike).betterendisland$setCrystalYOffsetFromPillarHeight(pillarHeight);
 
-        return new Pair<>(new ResourceLocation(BetterEndIslandCommon.MOD_ID, topName), new ResourceLocation(BetterEndIslandCommon.MOD_ID, bottomName));
+        return new Pair<>(
+                ResourceLocation.tryParse(BetterEndIslandCommon.MOD_ID + ":" + topName),
+                ResourceLocation.tryParse(BetterEndIslandCommon.MOD_ID + ":" + bottomName)
+        );
     }
 
     private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {

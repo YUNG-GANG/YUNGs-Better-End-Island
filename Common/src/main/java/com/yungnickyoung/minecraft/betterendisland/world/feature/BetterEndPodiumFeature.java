@@ -90,11 +90,11 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
 
     private ResourceLocation chooseTemplate() {
         if (this.isBottomOnly) {
-            return new ResourceLocation(BetterEndIslandCommon.MOD_ID, "tower_bottom_open");
+            return ResourceLocation.tryParse(BetterEndIslandCommon.MOD_ID + ":tower_bottom_open");
         }
         String towerType = this.isInitialSpawn ? "initial" : "broken";
         String towerName = "tower_" + towerType;
-        return new ResourceLocation(BetterEndIslandCommon.MOD_ID, towerName);
+        return ResourceLocation.tryParse(BetterEndIslandCommon.MOD_ID + ":" + towerName);
     }
 
     private boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {

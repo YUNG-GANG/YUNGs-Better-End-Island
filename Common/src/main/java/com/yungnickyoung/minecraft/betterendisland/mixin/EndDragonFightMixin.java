@@ -32,6 +32,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -631,7 +632,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 level.players().forEach(player -> {
                     level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
                     if (player.distanceToSqr(this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ()) > 32) {
-                        level.playSound(null, this.portalLocation.above(20), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
+                        level.playSound(player, this.portalLocation.above(20), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 24.0f, 1.0f);
                     }
                 });
                 // Place open, inactive bottom if we're not transitioning from an initial tower

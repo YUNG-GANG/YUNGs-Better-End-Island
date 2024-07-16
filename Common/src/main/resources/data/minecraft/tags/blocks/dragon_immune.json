@@ -1,4 +1,5 @@
 {
+  "replace": false,
   "values": [
     "minecraft:end_stone_bricks",
     "minecraft:end_stone_brick_stairs",
