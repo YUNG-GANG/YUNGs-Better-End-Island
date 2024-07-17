@@ -1,6 +1,7 @@
 package com.yungnickyoung.minecraft.betterendisland.world.feature;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
+import com.yungnickyoung.minecraft.betterendisland.mixin.EndPlatformFeatureMixin;
 import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
@@ -19,7 +20,7 @@ import java.util.Optional;
 
 /**
  * A replacement of vanilla's obsidian spawn platform that uses structure randomized structure templates.
- * Injected via {@link com.yungnickyoung.minecraft.betterendisland.mixin.ServerPlayerMixin}.
+ * Injected via {@link EndPlatformFeatureMixin}.
  */
 public class BetterEndSpawnPlatformFeature {
     private static final List<StructureProcessor> PROCESSORS = List.of(
@@ -32,7 +33,7 @@ public class BetterEndSpawnPlatformFeature {
         if (level.getDragonFight() != null) {
             numberTimesDragonKilled = ((IDragonFight) level.getDragonFight()).betterendisland$numTimesDragonKilled();
         }
-        ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "spawn_platform");
+        ResourceLocation template = ResourceLocation.tryParse(BetterEndIslandCommon.MOD_ID + ":spawn_platform");
         return placeTemplate(level, RandomSource.create(), origin, template, numberTimesDragonKilled);
     }
 

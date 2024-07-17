@@ -42,7 +42,7 @@ public class BetterEndGatewayFeature {
             numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
         }
 
-        ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "gateway");
+        ResourceLocation template = ResourceLocation.tryParse(BetterEndIslandCommon.MOD_ID + ":gateway");
         boolean placed = placeTemplate(level, ctx.random(), origin, template, numberTimesDragonKilled);
 
         BlockPos portalPos = new BlockPos(origin);

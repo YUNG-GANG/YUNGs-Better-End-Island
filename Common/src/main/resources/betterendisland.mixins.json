@@ -10,7 +10,7 @@
     "EndSpikeMixin",
     "PrimaryLevelDataMixin",
     "ServerLevelMixin",
-    "ServerPlayerMixin",
+    "EndPlatformFeatureMixin",
     "SpikeFeatureMixin",
     "TheEndGatewayBlockEntityMixin"
   ],

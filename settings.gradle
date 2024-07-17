@@ -21,4 +21,4 @@ plugins {
 }
 
 rootProject.name = 'betterendisland'
-include("Common", "Fabric", "Forge", "NeoForge")
+include("Common", "Fabric", "NeoForge")

@@ -35,7 +35,9 @@ public class PrimaryLevelDataMixin implements IPrimaryLevelData {
 
     @Inject(method = "setTagData", at = @At("RETURN"))
     private void betterendisland_attachExtraFightData2(RegistryAccess registryAccess, CompoundTag tag, CompoundTag $$2, CallbackInfo ci) {
-        tag.put("bei_ExtraDragonFight", Util.getOrThrow(ExtraFightData.CODEC.encodeStart(NbtOps.INSTANCE, this.betterendisland$endDragonFightData), IllegalStateException::new));
+        ExtraFightData.CODEC.encodeStart(NbtOps.INSTANCE, this.betterendisland$endDragonFightData)
+                .resultOrPartial(error -> BetterEndIslandCommon.LOGGER.error("Failed to encode ExtraFightData: {}", error))
+                .ifPresent(encodedData -> tag.put("bei_ExtraDragonFight", encodedData));
     }
 
     @Unique

@@ -3,6 +3,7 @@ package com.yungnickyoung.minecraft.betterendisland.world;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.ExtraCodecs;
+import net.minecraft.world.level.block.Blocks;
 
 public class ExtraFightData {
     private boolean firstExitPortalSpawn;
