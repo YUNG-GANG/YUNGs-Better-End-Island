@@ -16,6 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.EndGatewayConfiguration;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -42,7 +43,7 @@ public class BetterEndGatewayFeature {
             numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
         }
 
-        ResourceLocation template = new ResourceLocation(BetterEndIslandCommon.MOD_ID, "gateway");
+        ResourceLocation template = ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "gateway");
         boolean placed = placeTemplate(level, ctx.random(), origin, template, numberTimesDragonKilled);
 
         BlockPos portalPos = new BlockPos(origin);
@@ -75,6 +76,7 @@ public class BetterEndGatewayFeature {
         structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(Rotation.NONE); // Structure is radially symmetrical so rotation doesn't matter
         structurePlaceSettings.setRotationPivot(new BlockPos(1, 0, 1));
+        structurePlaceSettings.setLiquidSettings(LiquidSettings.IGNORE_WATERLOGGING);
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
         return true;
     }

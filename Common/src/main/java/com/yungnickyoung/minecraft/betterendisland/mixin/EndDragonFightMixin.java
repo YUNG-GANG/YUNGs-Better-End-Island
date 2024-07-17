@@ -40,6 +40,7 @@ import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
+import net.minecraft.world.level.levelgen.feature.EndPlatformFeature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
@@ -246,7 +247,11 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
         // Reset spawn playform to initial state
         BlockPos platformPos = ServerLevel.END_SPAWN_POINT.below();
-        BetterEndSpawnPlatformFeature.place(level, platformPos);
+        if (BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform) {
+            EndPlatformFeature.createEndPlatform(level, platformPos, false);
+        } else {
+            BetterEndSpawnPlatformFeature.place(level, platformPos, false);
+        }
 
         // Remove all gateways
         for (int i = 0; i < 20; i++) {
@@ -631,7 +636,7 @@ public abstract class EndDragonFightMixin implements IDragonFight {
                 level.players().forEach(player -> {
                     level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
                     if (player.distanceToSqr(this.portalLocation.getX(), this.portalLocation.getY() + 20, this.portalLocation.getZ()) > 32) {
-                        level.playSound(null, this.portalLocation.above(20), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
+                        level.playSound(null, this.portalLocation.above(20), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 24.0f, 1.0f);
                     }
                 });
                 // Place open, inactive bottom if we're not transitioning from an initial tower

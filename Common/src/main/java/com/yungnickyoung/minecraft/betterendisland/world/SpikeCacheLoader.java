@@ -8,13 +8,14 @@ import net.minecraft.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class SpikeCacheLoader extends CacheLoader<Long, List<SpikeFeature.EndSpike>> {
-    public List<SpikeFeature.EndSpike> load(Long $$0) {
-        IntArrayList indexes = Util.toShuffledList(IntStream.range(0, 10), RandomSource.create($$0));
+    public @NotNull List<SpikeFeature.EndSpike> load(@NotNull Long seed) {
+        IntArrayList indexes = Util.toShuffledList(IntStream.range(0, 10), RandomSource.create(seed));
         List<SpikeFeature.EndSpike> spikes = Lists.newArrayList();
         double radius = BetterEndIslandCommon.betterEnd ? 42 : 54; // vanilla is 42.0
 

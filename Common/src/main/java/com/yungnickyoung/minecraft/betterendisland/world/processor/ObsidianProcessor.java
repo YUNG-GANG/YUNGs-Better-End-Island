@@ -1,6 +1,6 @@
 package com.yungnickyoung.minecraft.betterendisland.world.processor;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.yungnickyoung.minecraft.betterendisland.module.StructureProcessorTypeModule;
 import net.minecraft.MethodsReturnNonnullByDefault;
@@ -24,7 +24,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class ObsidianProcessor extends StructureProcessor {
-    public static final Codec<ObsidianProcessor> CODEC = RecordCodecBuilder.create(instance -> instance
+    public static final MapCodec<ObsidianProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("number_times_dragon_killed").forGetter(config -> config.numberTimesDragonKilled))
             .apply(instance, instance.stable(ObsidianProcessor::new)));

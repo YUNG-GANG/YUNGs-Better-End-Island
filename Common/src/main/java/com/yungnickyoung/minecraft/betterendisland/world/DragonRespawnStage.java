@@ -72,7 +72,7 @@ public enum DragonRespawnStage implements StringRepresentable {
                             level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, crystalY, (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
                             level.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, crystalY, (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
                             if (player.distanceToSqr(spike.getCenterX(), crystalY, spike.getCenterZ()) > 32) {
-                                level.playSound(null, new BlockPos(spike.getCenterX(), crystalY, spike.getCenterZ()), SoundEvents.GENERIC_EXPLODE, SoundSource.NEUTRAL, 24.0f, 1.0f);
+                                level.playSound(null, new BlockPos(spike.getCenterX(), crystalY, spike.getCenterZ()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 24.0f, 1.0f);
                             }
                         });
 

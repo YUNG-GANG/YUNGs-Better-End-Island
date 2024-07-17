@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -90,11 +91,11 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
 
     private ResourceLocation chooseTemplate() {
         if (this.isBottomOnly) {
-            return new ResourceLocation(BetterEndIslandCommon.MOD_ID, "tower_bottom_open");
+            return ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "tower_bottom_open");
         }
         String towerType = this.isInitialSpawn ? "initial" : "broken";
         String towerName = "tower_" + towerType;
-        return new ResourceLocation(BetterEndIslandCommon.MOD_ID, towerName);
+        return ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, towerName);
     }
 
     private boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
@@ -117,6 +118,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
         structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(rotation);
         structurePlaceSettings.setRotationPivot(this.isBottomOnly ? new BlockPos(3, 0, 3) : new BlockPos(14, 0, 14));
+        structurePlaceSettings.setLiquidSettings(LiquidSettings.IGNORE_WATERLOGGING);
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
         return true;
     }

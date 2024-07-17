@@ -23,6 +23,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
+import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
@@ -120,7 +121,7 @@ public class BetterSpikeFeature {
         // This doesn't really belong here, but it's the easiest way to do it.
         ((IEndSpike) spike).betterendisland$setCrystalYOffsetFromPillarHeight(pillarHeight);
 
-        return new Pair<>(new ResourceLocation(BetterEndIslandCommon.MOD_ID, topName), new ResourceLocation(BetterEndIslandCommon.MOD_ID, bottomName));
+        return new Pair<>(ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, topName), ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, bottomName));
     }
 
     private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, ResourceLocation id, int numberTimesDragonKilled) {
@@ -138,6 +139,7 @@ public class BetterSpikeFeature {
         structurePlaceSettings.addProcessor(new ObsidianProcessor(numberTimesDragonKilled));
         structurePlaceSettings.setRotation(rotation);
         structurePlaceSettings.setRotationPivot(new BlockPos(9, 0, 9));
+        structurePlaceSettings.setLiquidSettings(LiquidSettings.IGNORE_WATERLOGGING);
         template.placeInWorld(level, cornerPos, centerPos, structurePlaceSettings, randomSource, 2);
         return true;
     }

@@ -45,7 +45,7 @@ public abstract class ServerLevelMixin extends Level {
 
     @Shadow @Nullable private EndDragonFight dragonFight;
     @Shadow @Final private MinecraftServer server;
-    @Unique ResourceLocation END_DIMENSION = new ResourceLocation("minecraft", "the_end");
+    @Unique ResourceLocation END_DIMENSION = ResourceLocation.withDefaultNamespace("the_end");
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void betterendisland_attachExtraData1(MinecraftServer server, Executor $$1, LevelStorageSource.LevelStorageAccess $$2, ServerLevelData $$3, ResourceKey $$4, LevelStem $$5, ChunkProgressListener $$6, boolean $$7, long $$8, List $$9, boolean $$10, RandomSequences $$11, CallbackInfo ci) {

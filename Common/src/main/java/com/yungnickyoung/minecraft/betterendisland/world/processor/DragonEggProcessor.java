@@ -1,6 +1,6 @@
 package com.yungnickyoung.minecraft.betterendisland.world.processor;
 
-import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.yungnickyoung.minecraft.betterendisland.module.StructureProcessorTypeModule;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
@@ -20,7 +20,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class DragonEggProcessor extends StructureProcessor {
     public static final DragonEggProcessor INSTANCE = new DragonEggProcessor();
-    public static final Codec<DragonEggProcessor> CODEC = Codec.unit(() -> INSTANCE);
+    public static final MapCodec<DragonEggProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
     @Override
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
