@@ -14,7 +14,7 @@ public class BEIConfigNeoForge {
 
         resummonedDragonDropsEgg = BUILDER
                 .comment(
-                        " Whether the Ender Dragon drops an egg when every time it's defeated.\n" +
+                        " Whether the Ender Dragon drops an egg every time it's defeated.\n" +
                         " Default: false")
                 .define("Resummoned Dragon Drops Egg", false);
 
