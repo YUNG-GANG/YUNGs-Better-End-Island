@@ -1,0 +1,7 @@
+{
+  "text.autoconfig.betterendisland-fabric-1_21.title": "YUNG's Better End Island",
+  "text.autoconfig.betterendisland-fabric-1_21.option.general.resummonedDragonDropsEgg": "Выпадение перевызывающего яйца дракона",
+  "text.autoconfig.betterendisland-fabric-1_21.option.general.resummonedDragonDropsEgg.@Tooltip": "Выпадает ли яйцо Эндер-Дракона всякий раз при его поражении.",
+  "text.autoconfig.betterendisland-fabric-1_21.option.general.useVanillaSpawnPlatform": "Появление ванильной обсидиановой площадки",
+  "text.autoconfig.betterendisland-fabric-1_21.option.general.useVanillaSpawnPlatform.@Tooltip": "Должна ли появляться ванильная обсидиановая площадка в Энде вместо  перелицованной площадки."
+}
