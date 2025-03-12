@@ -680,6 +680,8 @@ public abstract class EndDragonFightMixin implements IDragonFight {
 
     @Override
     public void betterendisland$tickBellSound() {
+        if (!BetterEndIslandCommon.CONFIG.playBellSound) return;
+
         if (!this.betterendisland$hasDragonEverSpawned || this.betterendisland$dragonRespawnStage != null) {
             long gameTime = this.level.getGameTime();
             int soundY = this.portalLocation == null ? 80 : this.portalLocation.getY() + 15;

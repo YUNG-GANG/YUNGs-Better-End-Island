@@ -30,5 +30,7 @@ public class ConfigModuleNeoForge {
     private static void bakeConfig() {
         BetterEndIslandCommon.CONFIG.resummonedDragonDropsEgg = BEIConfigNeoForge.resummonedDragonDropsEgg.get();
         BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform = BEIConfigNeoForge.useVanillaSpawnPlatform.get();
+        BetterEndIslandCommon.CONFIG.useVanillaEndGateways = BEIConfigNeoForge.useVanillaEndGateways.get();
+        BetterEndIslandCommon.CONFIG.playBellSound = BEIConfigNeoForge.playBellSound.get();
     }
 }

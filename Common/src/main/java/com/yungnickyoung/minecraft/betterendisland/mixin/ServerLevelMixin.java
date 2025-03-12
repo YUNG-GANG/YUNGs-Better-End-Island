@@ -66,8 +66,7 @@ public abstract class ServerLevelMixin extends Level {
             ExtraFightData extraFightData = new ExtraFightData(
                     ((IDragonFight) this.dragonFight).betterendisland$firstExitPortalSpawn(),
                     ((IDragonFight) this.dragonFight).betterendisland$hasDragonEverSpawned(),
-                    ((IDragonFight) this.dragonFight).betterendisland$numTimesDragonKilled()
-            );
+                    ((IDragonFight) this.dragonFight).betterendisland$numTimesDragonKilled());
             ((IPrimaryLevelData) this.server.getWorldData()).setExtraEndDragonFightData(extraFightData);
         }
     }

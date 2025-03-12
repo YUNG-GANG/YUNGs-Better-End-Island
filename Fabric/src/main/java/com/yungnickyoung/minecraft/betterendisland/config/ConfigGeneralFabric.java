@@ -8,4 +8,10 @@ public class ConfigGeneralFabric {
 
     @ConfigEntry.Gui.Tooltip
     public boolean useVanillaSpawnPlatform = false;
+
+    @ConfigEntry.Gui.Tooltip
+    public boolean useVanillaEndGateways = false;
+
+    @ConfigEntry.Gui.Tooltip
+    public boolean playBellSound = true;
 }

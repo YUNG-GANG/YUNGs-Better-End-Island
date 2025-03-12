@@ -29,5 +29,7 @@ public class ConfigModuleForge {
     private static void bakeConfig() {
         BetterEndIslandCommon.CONFIG.resummonedDragonDropsEgg = BEIConfigForge.resummonedDragonDropsEgg.get();
         BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform = BEIConfigForge.useVanillaSpawnPlatform.get();
+        BetterEndIslandCommon.CONFIG.useVanillaEndGateways = BEIConfigForge.useVanillaEndGateways.get();
+        BetterEndIslandCommon.CONFIG.playBellSound = BEIConfigForge.playBellSound.get();
     }
 }
