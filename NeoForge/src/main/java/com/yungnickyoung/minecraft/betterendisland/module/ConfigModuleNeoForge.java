@@ -32,5 +32,7 @@ public class ConfigModuleNeoForge {
         BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform = BEIConfigNeoForge.useVanillaSpawnPlatform.get();
         BetterEndIslandCommon.CONFIG.useVanillaEndGateways = BEIConfigNeoForge.useVanillaEndGateways.get();
         BetterEndIslandCommon.CONFIG.playBellSound = BEIConfigNeoForge.playBellSound.get();
+        BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially = BEIConfigNeoForge.spawnCentralTowerInitially.get();
+        BetterEndIslandCommon.CONFIG.spawnCentralTowerOnResummon = BEIConfigNeoForge.spawnCentralTowerOnResummon.get();
     }
 }

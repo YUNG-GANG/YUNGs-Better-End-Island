@@ -31,5 +31,7 @@ public class ConfigModuleForge {
         BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform = BEIConfigForge.useVanillaSpawnPlatform.get();
         BetterEndIslandCommon.CONFIG.useVanillaEndGateways = BEIConfigForge.useVanillaEndGateways.get();
         BetterEndIslandCommon.CONFIG.playBellSound = BEIConfigForge.playBellSound.get();
+        BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially = BEIConfigForge.spawnCentralTowerInitially.get();
+        BetterEndIslandCommon.CONFIG.spawnCentralTowerOnResummon = BEIConfigForge.spawnCentralTowerOnResummon.get();
     }
 }

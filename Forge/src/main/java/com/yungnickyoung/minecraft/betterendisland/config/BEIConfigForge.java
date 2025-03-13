@@ -10,6 +10,8 @@ public class BEIConfigForge {
     public static final ForgeConfigSpec.ConfigValue<Boolean> useVanillaSpawnPlatform;
     public static final ForgeConfigSpec.ConfigValue<Boolean> useVanillaEndGateways;
     public static final ForgeConfigSpec.ConfigValue<Boolean> playBellSound;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> spawnCentralTowerInitially;
+    public static final ForgeConfigSpec.ConfigValue<Boolean> spawnCentralTowerOnResummon;
 
     static {
         BUILDER.push("YUNG's Better End Island");
@@ -37,6 +39,18 @@ public class BEIConfigForge {
                         " Whether the bell sound should play before the Ender Dragon is summoned for the first time and during re-summonings.\n" +
                         " Default: true")
                 .define("Play Bell Sound", true);
+
+        spawnCentralTowerInitially = BUILDER
+                .comment(
+                        " Whether the central tower should spawn in the End when the world is first generated.\n" +
+                        " Default: true")
+                .define("Spawn Central Tower Initially", true);
+
+        spawnCentralTowerOnResummon = BUILDER
+                .comment(
+                        " Whether the central tower should respawn in the End when the Ender Dragon is re-summoned.\n" +
+                        " Default: true")
+                .define("Respawn Central Tower on Resummon", true);
 
         BUILDER.pop();
         SPEC = BUILDER.build();

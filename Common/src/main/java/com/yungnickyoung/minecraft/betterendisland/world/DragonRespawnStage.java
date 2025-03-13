@@ -153,7 +153,7 @@ public enum DragonRespawnStage implements StringRepresentable {
             }
 
             // Place broken tower w/ explosion effects
-            ExitPortalUtils.spawnPortal(dragonFight, serverLevel, false, false);
+            ExitPortalUtils.spawnPortal(dragonFight, serverLevel, false, false, true);
             serverLevel.explode(null, portalPos.getX(), portalPos.getY() + 20, portalPos.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             serverLevel.players().forEach(player -> {
                 serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, portalPos.getX(), portalPos.getY() + 20, portalPos.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
@@ -163,7 +163,7 @@ public enum DragonRespawnStage implements StringRepresentable {
             });
             // Place open, inactive bottom if we're not transitioning from an initial tower
             if (dragonFight.hasDragonEverSpawned()) {
-                ExitPortalUtils.spawnPortal(dragonFight, serverLevel, false, true);
+                ExitPortalUtils.spawnPortal(dragonFight, serverLevel, false, true, true);
                 serverLevel.explode(null, portalPos.getX(), portalPos.getY(), portalPos.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             }
 

@@ -25,5 +25,7 @@ public class ConfigModuleFabric {
         BetterEndIslandCommon.CONFIG.useVanillaSpawnPlatform = configFabric.general.useVanillaSpawnPlatform;
         BetterEndIslandCommon.CONFIG.useVanillaEndGateways = configFabric.general.useVanillaEndGateways;
         BetterEndIslandCommon.CONFIG.playBellSound = configFabric.general.playBellSound;
+        BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially = configFabric.general.spawnCentralTowerInitially;
+        BetterEndIslandCommon.CONFIG.spawnCentralTowerOnResummon = configFabric.general.spawnCentralTowerOnResummon;
     }
 }

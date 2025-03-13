@@ -14,4 +14,10 @@ public class ConfigGeneralFabric {
 
     @ConfigEntry.Gui.Tooltip
     public boolean playBellSound = true;
+
+    @ConfigEntry.Gui.Tooltip
+    public boolean spawnCentralTowerInitially = true;
+
+    @ConfigEntry.Gui.Tooltip
+    public boolean spawnCentralTowerOnResummon = true;
 }

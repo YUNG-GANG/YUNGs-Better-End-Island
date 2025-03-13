@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.state.pattern.BlockPattern;
 import net.minecraft.world.level.dimension.end.DragonRespawnAnimation;
 import net.minecraft.world.level.dimension.end.EndDragonFight;
 import net.minecraft.world.level.levelgen.feature.EndPlatformFeature;
+import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import org.spongepowered.asm.mixin.Final;
@@ -199,7 +200,7 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
         this.respawnCrystals = null;
         List<EndCrystal> remainingSummoningCrystals = EndCrystalUtils.checkForBEIRespawnCrystals(this.level, this.portalLocation.above(1));
         remainingSummoningCrystals.forEach(EndCrystal::discard);
-        remainingSummoningCrystals = EndCrystalUtils.checkForVanillaRespawnCrystals(this.level, this.portalLocation.below(2));
+        remainingSummoningCrystals = EndCrystalUtils.checkForVanillaRespawnCrystals(this.level, this, this.portalLocation);
         remainingSummoningCrystals.forEach(EndCrystal::discard);
 
         // Get rid of spike crystals
@@ -211,10 +212,19 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
         }
 
         // Reset tower to initial state w/ summoning crystals
-        // TODO - add option for disabling the central tower and using vanilla instead? This would use the "Spawn tower on first fight" of the two options
-        BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(true, false, false);
-        BlockPos spawnPos = this.portalLocation.below(5);
-        endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+        if (BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially) {
+            // Spawn the central tower
+            BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(true, false, false);
+            BlockPos spawnPos = this.portalLocation.below(5);
+            endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+        } else {
+            // Spawn the vanilla podium
+            EndPodiumFeature endPodiumFeature = new EndPodiumFeature(false);
+            if (endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), this.portalLocation)) {
+                int $$2 = Mth.positiveCeilDiv(4, 16);
+                this.level.getChunkSource().chunkMap.waitForLightBeforeSending(new ChunkPos(this.portalLocation), $$2);
+            }
+        }
 
         // Get rid of vanilla spikes in case they're there
         EndSpikeUtils.removeVanillaPillars(this.level);
@@ -301,7 +311,7 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
     @Inject(method = "tryRespawn", at = @At("HEAD"), cancellable = true)
     public void betterendisland_tryRespawn(CallbackInfo ci) {
         if (this.dragonKilled && this.bei$dragonRespawnStage == null) {
-            this.betterendisland$spawnDragon(false);
+            this.spawnDragon(false);
         }
         ci.cancel();
     }
@@ -313,11 +323,11 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
     @Override
     public void doInitialDragonSpawn() {
         BetterEndIslandCommon.LOGGER.info("Starting initial dragon fight!");
-        this.betterendisland$spawnDragon(true);
+        this.spawnDragon(true);
     }
 
     @Unique
-    private void betterendisland$spawnDragon(boolean isInitialSpawn) {
+    private void spawnDragon(boolean isInitialSpawn) {
         BlockPos portalPos = this.portalLocation;
         if (portalPos == null) {
             BetterEndIslandCommon.LOGGER.info("Tried to respawn, but need to find the portal first.");
@@ -336,7 +346,7 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
         // Check for all 4 summoning crystals
         List<EndCrystal> allCrystals = EndCrystalUtils.checkForBEIRespawnCrystals(this.level, portalPos.above(1));
         if (allCrystals.size() != 4) {
-            allCrystals = EndCrystalUtils.checkForVanillaRespawnCrystals(this.level, portalPos.below(2));
+            allCrystals = EndCrystalUtils.checkForVanillaRespawnCrystals(this.level, this, portalPos);
             if (allCrystals.size() != 4) {
                 if (isInitialSpawn) {
                     BetterEndIslandCommon.LOGGER.info("Unable to find all 4 summoning crystals. This shouldn't happen!");
@@ -380,7 +390,15 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
         if (dragon.getUUID().equals(this.dragonUUID)) {
             this.dragonEvent.setProgress(0.0F);
             this.dragonEvent.setVisible(false);
+
+            // Special case - killing the dragon for the first time with initial tower disabled but tower on resummoning enabled
+            if (this.bei$numTimesDragonKilled == 0
+                    && !BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially
+                    && BetterEndIslandCommon.CONFIG.spawnCentralTowerOnResummon) {
+                ExitPortalUtils.spawnPortal(this, this.level, false, false);
+            }
             ExitPortalUtils.spawnPortal(this, this.level, true, true);
+
             level.explode(null, this.portalLocation.getX(), this.portalLocation.getY(), this.portalLocation.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             this.spawnNewGateway();
             if (!this.previouslyKilled || BetterEndIslandCommon.moreDragonEggs || BetterEndIslandCommon.CONFIG.resummonedDragonDropsEgg) {

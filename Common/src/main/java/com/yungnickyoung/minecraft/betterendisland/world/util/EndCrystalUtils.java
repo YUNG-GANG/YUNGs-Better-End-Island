@@ -1,6 +1,8 @@
 package com.yungnickyoung.minecraft.betterendisland.world.util;
 
 import com.google.common.collect.Lists;
+import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
+import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
@@ -33,7 +35,18 @@ public class EndCrystalUtils {
     /**
      * Checks for valid End Crystals in the vanilla respawn positions.
      */
-    public static List<EndCrystal> checkForVanillaRespawnCrystals(@Nullable Level level, BlockPos centerPos) {
+    public static List<EndCrystal> checkForVanillaRespawnCrystals(@Nullable Level level, IBetterDragonFight dragonFight, BlockPos portalPos) {
+        BlockPos centerPos = portalPos.below(2);
+
+        // Adjust centerPos y-value based on settings
+        if (!dragonFight.hasDragonEverSpawned() && !BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially) {
+            centerPos = centerPos.above(4);
+        } else if (dragonFight.hasDragonEverSpawned()
+                && !BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially
+                && !BetterEndIslandCommon.CONFIG.spawnCentralTowerOnResummon) {
+            centerPos = centerPos.above(4);
+        }
+
         List<EndCrystal> foundCrystals = Lists.newArrayList();
         if (level == null) return foundCrystals;
 
