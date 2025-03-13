@@ -16,10 +16,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(SpikeFeature.EndSpike.class)
 public abstract class EndSpikeMixin implements IEndSpike {
-    @Shadow @Final @Mutable private AABB topBoundingBox;
-    @Shadow @Final private int height;
+    @Shadow
+    @Final
+    @Mutable
+    private AABB topBoundingBox;
 
-    @Unique private int betterendisland$crystalHeight = 0;
+    @Shadow
+    @Final
+    private int height;
+
+    @Unique
+    private int crystalHeight = 0;
 
     @Inject(method = "<init>", at = @At("RETURN"))
     private void betterendisland_adjustSpikeBoundingBox(int centerX, int centerZ, int radius, int height, boolean guarded, CallbackInfo ci) {
@@ -34,18 +41,20 @@ public abstract class EndSpikeMixin implements IEndSpike {
         cir.setReturnValue(this.height);
     }
 
+    @Unique
     @Override
-    public int betterendisland$getCrystalYOffset() {
-        return betterendisland$crystalHeight;
+    public int getCrystalYOffset() {
+        return crystalHeight;
     }
 
+    @Unique
     @Override
-    public void betterendisland$setCrystalYOffsetFromPillarHeight(int pillarHeight) {
-        this.betterendisland$crystalHeight = switch (pillarHeight) {
-            case 8,7,6 -> 32;
-            case 5,4 -> 27;
+    public void setCrystalYOffsetFromPillarHeight(int pillarHeight) {
+        this.crystalHeight = switch (pillarHeight) {
+            case 8, 7, 6 -> 32;
+            case 5, 4 -> 27;
             case 3 -> 26;
-            case 2,1 -> 22;
+            case 2, 1 -> 22;
             default -> 38; // case 9
         };
     }

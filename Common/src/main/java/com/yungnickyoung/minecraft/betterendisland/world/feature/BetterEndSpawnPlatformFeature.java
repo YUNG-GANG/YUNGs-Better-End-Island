@@ -2,7 +2,7 @@ package com.yungnickyoung.minecraft.betterendisland.world.feature;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.mixin.EndPlatformFeatureMixin;
-import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
+import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -29,7 +29,7 @@ public class BetterEndSpawnPlatformFeature {
         BlockPos origin = pos.offset(0, -14, 0);
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
+            numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
         }
         ResourceLocation template = ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "spawn_platform");
         return placeTemplate(level, RandomSource.create(), origin, template, numberTimesDragonKilled, dropDestroyedBlocks);

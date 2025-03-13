@@ -1,7 +1,7 @@
 package com.yungnickyoung.minecraft.betterendisland.world.feature;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
-import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
+import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
@@ -67,7 +67,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
 
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
+            numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
         }
 
         // Choose and place template

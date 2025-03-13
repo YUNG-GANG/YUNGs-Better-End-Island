@@ -2,7 +2,7 @@ package com.yungnickyoung.minecraft.betterendisland.command;
 
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
+import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -31,8 +31,8 @@ public class EndIslandCommand {
             commandSource.sendFailure(Component.literal("Could not find the dragon fight."));
             return -1;
         }
-        IDragonFight dragonFight = (IDragonFight) serverLevel.getDragonFight(); // Cast to custom interface
-        dragonFight.betterendisland$reset(forcePortalPosReset);
+        IBetterDragonFight dragonFight = (IBetterDragonFight) serverLevel.getDragonFight(); // Cast to custom interface
+        dragonFight.reset(forcePortalPosReset);
         commandSource.sendSuccess(() -> Component.literal("Ender Dragon fight has been reset."), false);
         return 1;
     }

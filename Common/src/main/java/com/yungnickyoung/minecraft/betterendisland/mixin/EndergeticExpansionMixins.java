@@ -33,7 +33,9 @@ import java.util.function.Supplier;
  */
 @Mixin(value = ServerLevel.class, priority = 2000)
 public abstract class EndergeticExpansionMixins extends Level {
-    @Shadow @Nullable private EndDragonFight dragonFight;
+    @Shadow
+    @Nullable
+    private EndDragonFight dragonFight;
 
     protected EndergeticExpansionMixins(WritableLevelData $$0, ResourceKey<Level> $$1, RegistryAccess $$2, Holder<DimensionType> $$3, Supplier<ProfilerFiller> $$4, boolean $$5, boolean $$6, long $$7, int $$8) {
         super($$0, $$1, $$2, $$3, $$4, $$5, $$6, $$7, $$8);

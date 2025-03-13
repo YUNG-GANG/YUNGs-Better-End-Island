@@ -4,7 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.mojang.datafixers.util.Pair;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
-import com.yungnickyoung.minecraft.betterendisland.world.IDragonFight;
+import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import com.yungnickyoung.minecraft.betterendisland.world.SpikeCacheLoader;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceProcessor;
@@ -80,7 +80,7 @@ public class BetterSpikeFeature {
 
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
-            numberTimesDragonKilled = ((IDragonFight) serverLevel.getDragonFight()).betterendisland$numTimesDragonKilled();
+            numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
         }
 
         // Place top part
@@ -103,7 +103,7 @@ public class BetterSpikeFeature {
             EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel());
             endCrystal.setBeamTarget(config.getCrystalBeamTarget());
             endCrystal.setInvulnerable(config.isCrystalInvulnerable());
-            int crystalY = topY + ((IEndSpike)spike).betterendisland$getCrystalYOffset();
+            int crystalY = topY + ((IEndSpike)spike).getCrystalYOffset();
             endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
             level.addFreshEntity(endCrystal);
             level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.BEDROCK.defaultBlockState(), 3);
@@ -119,7 +119,7 @@ public class BetterSpikeFeature {
 
         // Update spike crystal height, which depends on the template chosen.
         // This doesn't really belong here, but it's the easiest way to do it.
-        ((IEndSpike) spike).betterendisland$setCrystalYOffsetFromPillarHeight(pillarHeight);
+        ((IEndSpike) spike).setCrystalYOffsetFromPillarHeight(pillarHeight);
 
         return new Pair<>(ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, topName), ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, bottomName));
     }

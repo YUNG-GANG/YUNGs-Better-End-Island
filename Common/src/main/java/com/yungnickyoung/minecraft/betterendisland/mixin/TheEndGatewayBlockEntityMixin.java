@@ -20,7 +20,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(TheEndGatewayBlockEntity.class)
 public abstract class TheEndGatewayBlockEntityMixin {
-    @Unique private static final TagKey<Block> CANNOT_PLACE_ON = TagKey.create(Registries.BLOCK,
+    @Unique
+    private static final TagKey<Block> CANNOT_PLACE_ON = TagKey.create(Registries.BLOCK,
             ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "end_gateway_cannot_place_player_on"));
 
     @Inject(method = "findTallestBlock", at = @At("HEAD"), cancellable = true)
@@ -56,7 +57,7 @@ public abstract class TheEndGatewayBlockEntityMixin {
         BlockPos chosenPos = null;
         double minDistance = 0.0D;
 
-        for(BlockPos pos : BlockPos.betweenClosed(minPos, maxPos)) {
+        for (BlockPos pos : BlockPos.betweenClosed(minPos, maxPos)) {
             BlockState blockState = chunk.getBlockState(pos);
             BlockPos above = pos.above();
             BlockPos above2 = pos.above(2);
