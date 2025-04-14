@@ -31,7 +31,7 @@ public abstract class TheEndGatewayBlockEntityMixin {
         for (int xOffset = -radius; xOffset <= radius; ++xOffset) {
             for (int zOffset = -radius; zOffset <= radius; ++zOffset) {
                 if (xOffset != 0 || zOffset != 0 || placeAnywhere) {
-                    for (int y = level.getMaxBuildHeight() - 1; y > (targetPos == null ? level.getMinBuildHeight() : targetPos.getY()); --y) {
+                    for (int y = level.getMaxY() - 1; y > (targetPos == null ? level.getMinY() : targetPos.getY()); --y) {
                         BlockPos candidatePos = new BlockPos(pos.getX() + xOffset, y, pos.getZ() + zOffset);
                         BlockState blockState = level.getBlockState(candidatePos);
                         if (blockState.isCollisionShapeFullBlock(level, candidatePos) && (placeAnywhere || !blockState.is(CANNOT_PLACE_ON))) {

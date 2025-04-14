@@ -10,7 +10,7 @@ public class WorldgenUtils {
      */
     public static int getLowestBlockPosAt(Level level, int x, int z) {
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        for (int y = level.getMinBuildHeight(); y < level.getMaxBuildHeight(); y++) {
+        for (int y = level.getMinY(); y < level.getMaxY(); y++) {
             mutable.set(x, y, z);
             if (level.getBlockState(mutable).is(Blocks.END_STONE)) {
                 return y;
@@ -24,7 +24,7 @@ public class WorldgenUtils {
      */
     public static int getSurfacePosAt(Level level, int x, int z) {
         BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
-        for (int y = level.getMaxBuildHeight(); y > level.getMinBuildHeight(); y--) {
+        for (int y = level.getMaxY(); y > level.getMinY(); y--) {
             mutable.set(x, y, z);
             if (level.getBlockState(mutable).is(Blocks.END_STONE)) {
                 return y;

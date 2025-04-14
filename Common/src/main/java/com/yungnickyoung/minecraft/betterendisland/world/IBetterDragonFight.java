@@ -1,7 +1,5 @@
 package com.yungnickyoung.minecraft.betterendisland.world;
 
-import net.minecraft.world.level.dimension.end.EndDragonFight;
-
 public interface IBetterDragonFight {
     // New data
     DragonRespawnStage getDragonRespawnStage();

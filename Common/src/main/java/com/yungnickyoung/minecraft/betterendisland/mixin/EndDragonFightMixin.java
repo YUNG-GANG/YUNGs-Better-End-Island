@@ -302,7 +302,7 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
             this.updateCrystalCount();
             Entity dragonEntity = this.level.getEntity(this.dragonUUID);
             if (dragonEntity instanceof EnderDragon) {
-                ((EnderDragon) dragonEntity).onCrystalDestroyed(crystal, crystal.blockPosition(), damageSource);
+                ((EnderDragon) dragonEntity).onCrystalDestroyed(this.level, crystal, crystal.blockPosition(), damageSource);
             }
         }
         ci.cancel();

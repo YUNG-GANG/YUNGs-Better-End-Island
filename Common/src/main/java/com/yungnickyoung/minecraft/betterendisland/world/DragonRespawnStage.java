@@ -78,10 +78,10 @@ public enum DragonRespawnStage implements StringRepresentable {
                     } else {
                         serverLevel.explode(null, (float) spike.getCenterX() + 0.5F, crystalY, (float) spike.getCenterZ() + 0.5F, 5.0F, Level.ExplosionInteraction.BLOCK);
                         serverLevel.players().forEach(player -> {
-                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, crystalY, (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() - 5, crystalY, (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, crystalY, (float) spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
-                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, (float) spike.getCenterX() + 5, crystalY, (float) spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, true, spike.getCenterX() - 5, crystalY, spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, true, spike.getCenterX() - 5, crystalY, spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, true, spike.getCenterX() + 5, crystalY, spike.getCenterZ() - 5, 1, 0.0, 0.0, 0.0, 0.0);
+                            serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, true, spike.getCenterX() + 5, crystalY, spike.getCenterZ() + 5, 1, 0.0, 0.0, 0.0, 0.0);
                             if (player.distanceToSqr(spike.getCenterX(), crystalY, spike.getCenterZ()) > 32) {
                                 serverLevel.playSound(null, new BlockPos(spike.getCenterX(), crystalY, spike.getCenterZ()), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 24.0f, 1.0f);
                             }
@@ -156,7 +156,7 @@ public enum DragonRespawnStage implements StringRepresentable {
             ExitPortalUtils.spawnPortal(dragonFight, serverLevel, false, false, true);
             serverLevel.explode(null, portalPos.getX(), portalPos.getY() + 20, portalPos.getZ(), 6.0F, Level.ExplosionInteraction.NONE);
             serverLevel.players().forEach(player -> {
-                serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, portalPos.getX(), portalPos.getY() + 20, portalPos.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+                serverLevel.sendParticles(player, ParticleTypes.EXPLOSION_EMITTER, true, true, portalPos.getX(), portalPos.getY() + 20, portalPos.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
                 if (player.distanceToSqr(portalPos.getX(), portalPos.getY() + 20, portalPos.getZ()) > 32) {
                     serverLevel.playSound(null, portalPos.above(20), SoundEvents.GENERIC_EXPLODE.value(), SoundSource.NEUTRAL, 24.0f, 1.0f);
                 }

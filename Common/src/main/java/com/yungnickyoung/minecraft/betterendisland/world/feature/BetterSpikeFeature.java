@@ -15,10 +15,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
@@ -100,13 +102,15 @@ public class BetterSpikeFeature {
 
         // If not initial spawn, spawn crystal and bedrock below it
         if (!isInitialSpawn) {
-            EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel());
-            endCrystal.setBeamTarget(config.getCrystalBeamTarget());
-            endCrystal.setInvulnerable(config.isCrystalInvulnerable());
-            int crystalY = topY + ((IEndSpike)spike).getCrystalYOffset();
-            endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
-            level.addFreshEntity(endCrystal);
-            level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.BEDROCK.defaultBlockState(), 3);
+            EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            if (endCrystal != null) {
+                endCrystal.setBeamTarget(config.getCrystalBeamTarget());
+                endCrystal.setInvulnerable(config.isCrystalInvulnerable());
+                int crystalY = topY + ((IEndSpike) spike).getCrystalYOffset();
+                endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
+                level.addFreshEntity(endCrystal);
+                level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.BEDROCK.defaultBlockState(), Block.UPDATE_ALL);
+            }
         }
     }
 

@@ -71,7 +71,7 @@ public class EndSpikeUtils {
             serverLevel.getEntitiesOfClass(EndCrystal.class, topBoundingBox).forEach(EndCrystal::discard);
 
             // Remove obsidian & bedrock
-            for (BlockPos pos : BlockPos.betweenClosed(new BlockPos(x - radius, serverLevel.getMinBuildHeight(), z - radius), new BlockPos(x + radius, height + 20, z + radius))) {
+            for (BlockPos pos : BlockPos.betweenClosed(new BlockPos(x - radius, serverLevel.getMinY(), z - radius), new BlockPos(x + radius, height + 20, z + radius))) {
                 if (pos.distToLowCornerSqr(x, pos.getY(), z) <= (double)(radius * radius + 1)) {
                     BlockState blockState = serverLevel.getBlockState(pos);
                     if (blockState.is(Blocks.OBSIDIAN) || blockState.is(Blocks.BEDROCK)) {
