@@ -107,7 +107,9 @@ public class BetterSpikeFeature {
                 endCrystal.setBeamTarget(config.getCrystalBeamTarget());
                 endCrystal.setInvulnerable(config.isCrystalInvulnerable());
                 int crystalY = topY + ((IEndSpike) spike).getCrystalYOffset();
-                endCrystal.moveTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
+                endCrystal.setPos((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D);
+                endCrystal.setXRot(randomSource.nextFloat() * 360.0F);
+                endCrystal.setYRot(0.0F);
                 level.addFreshEntity(endCrystal);
                 level.setBlock(new BlockPos(spike.getCenterX(), crystalY - 1, spike.getCenterZ()), Blocks.BEDROCK.defaultBlockState(), Block.UPDATE_ALL);
             }

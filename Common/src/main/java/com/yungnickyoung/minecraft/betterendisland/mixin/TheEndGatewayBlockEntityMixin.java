@@ -52,7 +52,7 @@ public abstract class TheEndGatewayBlockEntityMixin {
         ChunkPos chunkPos = chunk.getPos();
         BlockPos minPos = new BlockPos(chunkPos.getMinBlockX(), 30, chunkPos.getMinBlockZ());
 
-        int maxY = chunk.getHighestSectionPosition() + 16 - 1;
+        int maxY = chunk.getMaxSectionY() + 16 - 1;
         BlockPos maxPos = new BlockPos(chunkPos.getMaxBlockX(), maxY, chunkPos.getMaxBlockZ());
         BlockPos chosenPos = null;
         double minDistance = 0.0D;

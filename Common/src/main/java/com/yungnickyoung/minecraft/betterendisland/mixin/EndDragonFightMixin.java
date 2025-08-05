@@ -18,6 +18,7 @@ import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerBossEvent;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.Ticket;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -103,7 +104,7 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
         }
 
         if (!this.dragonEvent.getPlayers().isEmpty()) {
-            this.level.getChunkSource().addRegionTicket(TicketType.DRAGON, new ChunkPos(0, 0), 9, Unit.INSTANCE);
+            this.level.getChunkSource().addTicket(new Ticket(TicketType.DRAGON, 9), new ChunkPos(0, 0));
             boolean isArenaLoaded = this.isArenaLoaded();
 
             // Initial state scanning.
@@ -135,7 +136,7 @@ public abstract class EndDragonFightMixin implements IBetterDragonFight {
                 }
             }
         } else {
-            this.level.getChunkSource().removeRegionTicket(TicketType.DRAGON, new ChunkPos(0, 0), 9, Unit.INSTANCE);
+            this.level.getChunkSource().removeTicketWithRadius(TicketType.DRAGON, new ChunkPos(0, 0), 9);
         }
         ci.cancel();
     }
