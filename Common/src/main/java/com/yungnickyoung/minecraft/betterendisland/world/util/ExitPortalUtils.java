@@ -1,7 +1,7 @@
 package com.yungnickyoung.minecraft.betterendisland.world.util;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
-import com.yungnickyoung.minecraft.betterendisland.mixin.accessor.EndDragonFightAccessor;
+import com.yungnickyoung.minecraft.betterendisland.mixin.accessor.EnderDragonFightAccessor;
 import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterEndPodiumFeature;
 import net.minecraft.core.BlockPos;
@@ -31,7 +31,7 @@ public class ExitPortalUtils {
                 ? BetterEndIslandCommon.CONFIG.spawnCentralTowerOnResummon
                 : BetterEndIslandCommon.CONFIG.spawnCentralTowerInitially;
 
-        EndDragonFightAccessor fightAccessor = (EndDragonFightAccessor) dragonFight;
+        EnderDragonFightAccessor fightAccessor = (EnderDragonFightAccessor) dragonFight;
 
         // Update the portal location to ensure it is set to the correct position
         fightAccessor.setPortalLocation(getAdjustedPortalPos(fightAccessor.getPortalLocation(), serverLevel));
@@ -53,7 +53,7 @@ public class ExitPortalUtils {
 
             if (endPodiumFeature.place(FeatureConfiguration.NONE, serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), spawnPos)) {
                 int $$2 = Mth.positiveCeilDiv(4, 16);
-                serverLevel.getChunkSource().chunkMap.waitForLightBeforeSending(new ChunkPos(spawnPos), $$2);
+                serverLevel.getChunkSource().chunkMap.waitForLightBeforeSending(ChunkPos.containing(spawnPos), $$2);
             }
 
             // Place crystals on initial spawn

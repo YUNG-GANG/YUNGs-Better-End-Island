@@ -5,7 +5,7 @@ import com.google.common.collect.DiscreteDomain;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Range;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
-import com.yungnickyoung.minecraft.betterendisland.mixin.accessor.EndDragonFightAccessor;
+import com.yungnickyoung.minecraft.betterendisland.mixin.accessor.EnderDragonFightAccessor;
 import com.yungnickyoung.minecraft.betterendisland.world.util.ExitPortalUtils;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
@@ -21,19 +21,20 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.dimension.end.EndDragonFight;
+import net.minecraft.world.level.dimension.end.EnderDragonFight;
+import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.SpikeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
+import net.minecraft.world.level.levelgen.feature.configurations.EndSpikeConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public enum DragonRespawnStage implements StringRepresentable {
+public enum BetterDragonRespawnStage implements StringRepresentable {
     START("start") {
-        public void tick(ServerLevel serverLevel, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
+        @Override
+        public void tick(ServerLevel serverLevel, EnderDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
             // Singular tick - update beam target pos for all crystals
             BlockPos beamTargetPos = new BlockPos(0, 128, 0);
             summoningCrystals.forEach(crystal -> crystal.setBeamTarget(beamTargetPos));
@@ -41,7 +42,8 @@ public enum DragonRespawnStage implements StringRepresentable {
         }
     },
     PREPARING_TO_SUMMON_PILLARS("preparing_to_summon_pillars") {
-        public void tick(ServerLevel serverLevel, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
+        @Override
+        public void tick(ServerLevel serverLevel, EnderDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
             // 100 ticks - growl sounds
             int totalPhaseTime = 100;
             if (phaseTimer < totalPhaseTime) {
@@ -54,16 +56,17 @@ public enum DragonRespawnStage implements StringRepresentable {
         }
     },
     SUMMONING_PILLARS("summoning_pillars") {
-        public void tick(ServerLevel serverLevel, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
+        @Override
+        public void tick(ServerLevel serverLevel, EnderDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
             // Summons all spikes. 40 ticks per spike.
             int ticksPerSpike = 40;
             boolean isFirstTickForSpike = phaseTimer % ticksPerSpike == 0;
             boolean isLastTickForSpike = phaseTimer % ticksPerSpike == 39;
             if (isFirstTickForSpike || isLastTickForSpike) {
-                List<SpikeFeature.EndSpike> allSpikes = SpikeFeature.getSpikesForLevel(serverLevel);
+                List<EndSpikeFeature.EndSpike> allSpikes = EndSpikeFeature.getSpikesForLevel(serverLevel);
                 int spikeIndex = phaseTimer / ticksPerSpike;
                 if (spikeIndex < allSpikes.size()) {
-                    SpikeFeature.EndSpike spike = allSpikes.get(spikeIndex);
+                    EndSpikeFeature.EndSpike spike = allSpikes.get(spikeIndex);
                     int pillarHeight = (spike.getHeight() - 73) / 3;
                     if (pillarHeight == 10) pillarHeight = 9; // We don't have a 10th variant
                     ((IEndSpike) spike).setCrystalYOffsetFromPillarHeight(pillarHeight);
@@ -98,7 +101,7 @@ public enum DragonRespawnStage implements StringRepresentable {
                         }
 
                         // Place new spike
-                        SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), new BlockPos(0, 128, 0));
+                        EndSpikeConfiguration spikeConfig = new EndSpikeConfiguration(true, ImmutableList.of(spike), new BlockPos(0, 128, 0));
                         Feature.END_SPIKE.place(spikeConfig, serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), new BlockPos(spike.getCenterX(), 45, spike.getCenterZ()));
                     }
                 } else if (isFirstTickForSpike) {
@@ -109,7 +112,8 @@ public enum DragonRespawnStage implements StringRepresentable {
         }
     },
     SUMMONING_DRAGON("summoning_dragon") {
-        public void tick(ServerLevel serverLevel, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
+        @Override
+        public void tick(ServerLevel serverLevel, EnderDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
             int totalPhaseTime = 100;
             if (phaseTimer >= totalPhaseTime) { // Move to next stage after 100 ticks
                 ((IBetterDragonFight) dragonFight).advanceRespawnStage(END);
@@ -132,22 +136,23 @@ public enum DragonRespawnStage implements StringRepresentable {
         }
     },
     END("end") {
-        public void tick(ServerLevel serverLevel, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
+        @Override
+        public void tick(ServerLevel serverLevel, EnderDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer) {
         }
 
         @Override
         public void onStart(ServerLevel serverLevel, IBetterDragonFight dragonFight) {
-            BlockPos portalPos = ((EndDragonFightAccessor) dragonFight).getPortalLocation();
+            BlockPos portalPos = ((EnderDragonFightAccessor) dragonFight).getPortalLocation();
 
             // Create new dragon
             dragonFight.setDragonRespawnStage(null);
-            ((EndDragonFightAccessor) dragonFight).setDragonKilled(false);
-            EnderDragon newDragon = ((EndDragonFightAccessor) dragonFight).invokeCreateNewDragon();
+            ((EnderDragonFightAccessor) dragonFight).setDragonKilled(false);
+            EnderDragon newDragon = ((EnderDragonFightAccessor) dragonFight).invokeCreateNewDragon();
 
             // Only trigger summoning (used for respawn advancement) if the dragon has been killed before,
             // since we auto-summon the dragon for the first fight
-            if (((EndDragonFightAccessor) dragonFight).getPreviouslyKilled()) {
-                for (ServerPlayer serverPlayer : ((EndDragonFightAccessor) dragonFight).getDragonEvent().getPlayers()) {
+            if (((EnderDragonFightAccessor) dragonFight).getPreviouslyKilled()) {
+                for (ServerPlayer serverPlayer : ((EnderDragonFightAccessor) dragonFight).getDragonEvent().getPlayers()) {
                     CriteriaTriggers.SUMMONED_ENTITY.trigger(serverPlayer, newDragon);
                 }
             }
@@ -171,7 +176,7 @@ public enum DragonRespawnStage implements StringRepresentable {
             int dragonKills = Mth.clamp(dragonFight.getNumTimesDragonKilled(), 0, 10);
             float cryingChance = Mth.lerp(dragonKills / 10f, 0f, 0.5f);
             List<Integer> existingGateways = new ArrayList<>(ContiguousSet.create(Range.closedOpen(0, 20), DiscreteDomain.integers()));
-            existingGateways.removeAll(((EndDragonFightAccessor) dragonFight).getGateways());
+            existingGateways.removeAll(((EnderDragonFightAccessor) dragonFight).getGateways());
             existingGateways.forEach(gateway -> {
                 int x = Mth.floor(96.0D * Math.cos(2.0D * (-Math.PI + 0.15707963267948966D * (double) gateway)));
                 int z = Mth.floor(96.0D * Math.sin(2.0D * (-Math.PI + 0.15707963267948966D * (double) gateway)));
@@ -197,16 +202,16 @@ public enum DragonRespawnStage implements StringRepresentable {
         }
     };
 
-    public static final StringRepresentable.EnumCodec<DragonRespawnStage> CODEC = StringRepresentable.fromEnum(DragonRespawnStage::values);
+    public static final StringRepresentable.EnumCodec<BetterDragonRespawnStage> CODEC = StringRepresentable.fromEnum(BetterDragonRespawnStage::values);
 
     @Nullable
-    public static DragonRespawnStage byName(@Nullable String name) {
+    public static BetterDragonRespawnStage byName(@Nullable String name) {
         return CODEC.byName(name);
     }
 
     private final String name;
 
-    DragonRespawnStage(String name) {
+    BetterDragonRespawnStage(String name) {
         this.name = name.toLowerCase();
     }
 
@@ -223,11 +228,11 @@ public enum DragonRespawnStage implements StringRepresentable {
      * Called every tick to update the state of the dragon respawn process.
      *
      * @param serverLevel       the ServerLevel
-     * @param dragonFight       the EndDragonFight instance
+     * @param dragonFight       the EnderDragonFight instance
      * @param summoningCrystals the four EndCrystals that are being used to summon the dragon
      * @param phaseTimer        how many ticks have passed since the start of the current phase
      */
-    public abstract void tick(ServerLevel serverLevel, EndDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer);
+    public abstract void tick(ServerLevel serverLevel, EnderDragonFight dragonFight, List<EndCrystal> summoningCrystals, int phaseTimer);
 
     /**
      * Called when the stage is started, before the first tick.

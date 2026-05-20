@@ -18,23 +18,25 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.UUID;
+
 @Mixin(PrimaryLevelData.class)
 public class PrimaryLevelDataMixin implements IPrimaryLevelData {
     @Unique
     private ExtraFightData extraFightData = ExtraFightData.DEFAULT;
 
     @Inject(method = "parse", at = @At("RETURN"))
-    private static <T> void betterendisland_attachExtraFightData1(Dynamic<T> dynamic, LevelSettings $$1, PrimaryLevelData.SpecialWorldProperty $$2, WorldOptions $$3, Lifecycle $$4, CallbackInfoReturnable<PrimaryLevelData> cir) {
+    private static <T> void betterendisland_attachExtraFightData1(Dynamic<T> input, LevelSettings settings, PrimaryLevelData.SpecialWorldProperty specialWorldProperty, Lifecycle worldGenSettingsLifecycle, CallbackInfoReturnable<PrimaryLevelData> cir) {
         PrimaryLevelData data = cir.getReturnValue();
-        ExtraFightData extraFightData = dynamic.get("bei_ExtraDragonFight")
+        ExtraFightData extraFightData = input.get("bei_ExtraDragonFight")
                 .read(ExtraFightData.CODEC)
                 .resultOrPartial(BetterEndIslandCommon.LOGGER::error)
                 .orElse(ExtraFightData.DEFAULT);
-        ((IPrimaryLevelData) data).setExtraEndDragonFightData(extraFightData);
+        ((IPrimaryLevelData) data).setExtraEnderDragonFightData(extraFightData);
     }
 
     @Inject(method = "setTagData", at = @At("RETURN"))
-    private void betterendisland_attachExtraFightData2(RegistryAccess registryAccess, CompoundTag tag, CompoundTag $$2, CallbackInfo ci) {
+    private void betterendisland_attachExtraFightData2(CompoundTag tag, UUID singlePlayerUUID, CallbackInfo ci) {
         ExtraFightData.CODEC.encodeStart(NbtOps.INSTANCE, this.extraFightData)
                 .resultOrPartial(e -> BetterEndIslandCommon.LOGGER.error("Failed to encode bei_ExtraDragonFight: {}", e))
                 .ifPresent(extraFightDataTag -> tag.put("bei_ExtraDragonFight", extraFightDataTag));
@@ -42,12 +44,12 @@ public class PrimaryLevelDataMixin implements IPrimaryLevelData {
 
     @Unique
     @Override
-    public void setExtraEndDragonFightData(ExtraFightData extraFightData) {
+    public void setExtraEnderDragonFightData(ExtraFightData extraFightData) {
         this.extraFightData = extraFightData;
     }
 
     @Override
-    public ExtraFightData getExtraEndDragonFightData() {
+    public ExtraFightData getExtraEnderDragonFightData() {
         return this.extraFightData;
     }
 }
