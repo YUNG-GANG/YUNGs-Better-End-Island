@@ -91,6 +91,7 @@ processResources {
             "mod_credits": mod_credits,
             "java_version": java_version,
             "yungsapi_version": yungsapi_version,
+	    "modmenu_version_fabric": modmenu_version_fabric
     ]
 
     var jsonExpandProps = expandProps.collectEntries {
