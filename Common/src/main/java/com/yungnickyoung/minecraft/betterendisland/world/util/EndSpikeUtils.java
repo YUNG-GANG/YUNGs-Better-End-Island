@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.feature.BetterSpikeFeature;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -13,7 +13,9 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
 import net.minecraft.world.level.levelgen.feature.SpikeFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.EndSpikeConfiguration;
 import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 import net.minecraft.world.phys.AABB;
 
@@ -24,7 +26,7 @@ public class EndSpikeUtils {
     /**
      * Deletes any pre-existing BEI spikes and regenerates them.
      */
-    public static void resetSpikes(ServerLevel serverLevel, List<SpikeFeature.EndSpike> spikes) {
+    public static void resetSpikes(ServerLevel serverLevel, List<EndSpikeFeature.EndSpike> spikes) {
         spikes.forEach(spike -> {
             int resetRadius = 11;
             int verticalRadius = BetterEndIslandCommon.betterEnd ? 40 : 30;
@@ -39,7 +41,7 @@ public class EndSpikeUtils {
             }
 
             // Place new spike
-            SpikeConfiguration spikeConfig = new SpikeConfiguration(true, ImmutableList.of(spike), null);
+            EndSpikeConfiguration spikeConfig = new EndSpikeConfiguration(true, ImmutableList.of(spike), null);
             BetterSpikeFeature.placeSpike(serverLevel, RandomSource.create(), spikeConfig, spike, true);
         });
     }

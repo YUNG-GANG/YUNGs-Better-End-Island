@@ -8,12 +8,13 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.permissions.Permissions;
 import net.minecraft.world.level.Level;
 
 public class EndIslandCommand {
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher, CommandBuildContext ctx, Commands.CommandSelection selection) {
         dispatcher.register(Commands.literal("end_island")
-                .requires((source) -> source.hasPermission(2))
+                .requires((source) -> source.permissions().hasPermission(Permissions.COMMANDS_GAMEMASTER))
                 .then(Commands.literal("reset")
                         .executes(context -> executeReset(context.getSource(), false))
                         .then(Commands.argument("forceNewPortalPos", BoolArgumentType.bool())

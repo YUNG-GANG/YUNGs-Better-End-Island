@@ -2,8 +2,8 @@ package com.yungnickyoung.minecraft.betterendisland.world;
 
 public interface IBetterDragonFight {
     // New data
-    DragonRespawnStage getDragonRespawnStage();
-    void setDragonRespawnStage(DragonRespawnStage stage);
+    BetterDragonRespawnStage getDragonRespawnStage();
+    void setDragonRespawnStage(BetterDragonRespawnStage stage);
     boolean isFirstExitPortalSpawn();
     void setIsFirstExitPortalSpawn(boolean bl);
     boolean hasDragonEverSpawned();
@@ -12,7 +12,7 @@ public interface IBetterDragonFight {
     void setNumTimesDragonKilled(int i);
 
     // Actions
-    void advanceRespawnStage(DragonRespawnStage stage);
+    void advanceRespawnStage(BetterDragonRespawnStage stage);
     void doInitialDragonSpawn();
     void tickBellSound();
     void reset(boolean forcePortalPosReset);

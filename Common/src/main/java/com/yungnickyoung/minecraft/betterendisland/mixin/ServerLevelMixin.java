@@ -4,21 +4,25 @@ import com.yungnickyoung.minecraft.betterendisland.world.ExtraFightData;
 import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.IPrimaryLevelData;
 import com.yungnickyoung.minecraft.betterendisland.world.util.WorldgenUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
-import net.minecraft.world.RandomSequences;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.CustomSpawner;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Spawner;
 import net.minecraft.world.level.dimension.BuiltinDimensionTypes;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.dimension.LevelStem;
-import net.minecraft.world.level.dimension.end.EndDragonFight;
+import net.minecraft.world.level.dimension.end.EnderDragonFight;
+import net.minecraft.world.level.levelgen.WorldGenSettings;
+import net.minecraft.world.level.levelgen.WorldOptions;
 import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.SavedDataStorage;
 import net.minecraft.world.level.storage.ServerLevelData;
 import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Final;
@@ -41,26 +45,31 @@ public abstract class ServerLevelMixin extends Level {
 
     @Shadow
     @Nullable
-    public abstract EndDragonFight getDragonFight();
+    public abstract EnderDragonFight getDragonFight();
 
     @Shadow
     @Nullable
-    private EndDragonFight dragonFight;
+    private EnderDragonFight dragonFight;
 
     @Shadow
     @Final
     private MinecraftServer server;
 
+    @Shadow
+    public abstract SavedDataStorage getDataStorage();
+
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void betterendisland_attachExtraData1(MinecraftServer server, Executor $$1, LevelStorageSource.LevelStorageAccess $$2, ServerLevelData $$3, ResourceKey $$4, LevelStem $$5, ChunkProgressListener $$6, boolean $$7, long $$8, List $$9, boolean $$10, RandomSequences $$11, CallbackInfo ci) {
+    private void betterendisland_attachExtraData1(MinecraftServer server, Executor executor, LevelStorageSource.LevelStorageAccess levelStorage, ServerLevelData levelData, ResourceKey<Level> dimension, LevelStem levelStem, boolean isDebug, long biomeZoomSeed, List<CustomSpawner> customSpawners, boolean tickTime, CallbackInfo ci) {
         if (this.dragonFight != null) {
-            this.dragonFight = new EndDragonFight((ServerLevel) (Object) this,
-                    server.getWorldData().worldGenOptions().seed(),
-                    server.getWorldData().endDragonFightData());
-            ExtraFightData extraFightData = ((IPrimaryLevelData) (server.getWorldData())).getExtraEndDragonFightData();
-            ((IBetterDragonFight) dragonFight).setIsFirstExitPortalSpawn(extraFightData.firstExitPortalSpawn());
-            ((IBetterDragonFight) dragonFight).setHasDragonEverSpawned(extraFightData.hasDragonEverSpawned());
-            ((IBetterDragonFight) dragonFight).setNumTimesDragonKilled(extraFightData.numTimesDragonKilled());
+            WorldGenSettings worldGenSettings = server.getWorldGenSettings();
+            WorldOptions options = worldGenSettings.options();
+            long seed = options.seed();
+            this.dragonFight = this.getDataStorage().computeIfAbsent(EnderDragonFight.TYPE);
+            this.dragonFight.init((ServerLevel) (Level) this, seed, BlockPos.ZERO);
+            ExtraFightData extraFightData = ((IPrimaryLevelData) (server.getWorldData())).getExtraEnderDragonFightData();
+            ((IBetterDragonFight) this.dragonFight).setIsFirstExitPortalSpawn(extraFightData.firstExitPortalSpawn());
+            ((IBetterDragonFight) this.dragonFight).setHasDragonEverSpawned(extraFightData.hasDragonEverSpawned());
+            ((IBetterDragonFight) this.dragonFight).setNumTimesDragonKilled(extraFightData.numTimesDragonKilled());
         }
     }
 
@@ -71,13 +80,13 @@ public abstract class ServerLevelMixin extends Level {
                     ((IBetterDragonFight) this.dragonFight).isFirstExitPortalSpawn(),
                     ((IBetterDragonFight) this.dragonFight).hasDragonEverSpawned(),
                     ((IBetterDragonFight) this.dragonFight).getNumTimesDragonKilled());
-            ((IPrimaryLevelData) this.server.getWorldData()).setExtraEndDragonFightData(extraFightData);
+            ((IPrimaryLevelData) this.server.getWorldData()).setExtraEnderDragonFightData(extraFightData);
         }
     }
 
     @Inject(method = "tick", at = @At("HEAD"))
     private void betterendisland_tickInitialDragonSummonTrigger(BooleanSupplier booleanSupplier, CallbackInfo ci) {
-        if (!this.dimension().location().equals(BuiltinDimensionTypes.END.location()) || this.getDragonFight() == null) {
+        if (!this.dimensionType().hasEnderDragonFight() || this.getDragonFight() == null) {
             return;
         }
 

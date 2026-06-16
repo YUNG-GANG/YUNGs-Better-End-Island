@@ -5,7 +5,7 @@ import com.yungnickyoung.minecraft.betterendisland.mixin.EndPlatformFeatureMixin
 import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -31,12 +31,12 @@ public class BetterEndSpawnPlatformFeature {
         if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
             numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
         }
-        ResourceLocation template = ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "spawn_platform");
+        Identifier template = Identifier.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "spawn_platform");
         return placeTemplate(level, RandomSource.create(), origin, template, numberTimesDragonKilled, dropDestroyedBlocks);
     }
 
     private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos,
-                                         ResourceLocation id, int numberTimesDragonKilled, boolean destroyBlocks) {
+                                         Identifier id, int numberTimesDragonKilled, boolean destroyBlocks) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);

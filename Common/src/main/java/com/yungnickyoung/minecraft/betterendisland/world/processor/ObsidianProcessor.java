@@ -3,7 +3,7 @@ package com.yungnickyoung.minecraft.betterendisland.world.processor;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.yungnickyoung.minecraft.betterendisland.module.StructureProcessorTypeModule;
-import net.minecraft.MethodsReturnNonnullByDefault;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.Mth;
@@ -15,14 +15,15 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlac
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import org.jspecify.annotations.NullMarked;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
 /**
  * Replaces obsidian with crying obsidian based on number of times dragon has been killed.
  */
-@ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
+
+@NullMarked
 public class ObsidianProcessor extends StructureProcessor {
     public static final MapCodec<ObsidianProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(

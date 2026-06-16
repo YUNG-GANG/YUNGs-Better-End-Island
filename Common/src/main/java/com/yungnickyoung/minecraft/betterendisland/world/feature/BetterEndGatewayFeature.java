@@ -5,7 +5,7 @@ import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.ServerLevelAccessor;
@@ -43,7 +43,7 @@ public class BetterEndGatewayFeature {
             numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
         }
 
-        ResourceLocation template = ResourceLocation.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "gateway");
+        Identifier template = Identifier.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "gateway");
         boolean placed = placeTemplate(level, ctx.random(), origin, template, numberTimesDragonKilled);
 
         BlockPos portalPos = new BlockPos(origin);
@@ -61,7 +61,7 @@ public class BetterEndGatewayFeature {
         return placed;
     }
 
-    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, ResourceLocation id, int numberTimesDragonKilled) {
+    private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Identifier id, int numberTimesDragonKilled) {
         Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
