@@ -3,7 +3,6 @@ package com.yungnickyoung.minecraft.betterendisland.world.processor;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.yungnickyoung.minecraft.betterendisland.module.StructureProcessorTypeModule;
 import com.yungnickyoung.minecraft.yungsapi.api.world.randomize.BlockStateRandomizer;
 
 import net.minecraft.core.BlockPos;
@@ -22,7 +21,6 @@ import net.minecraft.world.level.block.state.properties.Half;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluids;
@@ -32,7 +30,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 
 @NullMarked
-public class BlockReplaceProcessor extends StructureProcessor {
+public class BlockReplaceProcessor implements StructureProcessor {
     public static final MapCodec<BlockReplaceProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     BlockState.CODEC.fieldOf("target_block").forGetter(config -> config.targetBlock),
@@ -68,40 +66,40 @@ public class BlockReplaceProcessor extends StructureProcessor {
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
                                                              BlockPos jigsawPiecePos,
                                                              BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.StructureBlockInfo blockInfoLocal,
-                                                             StructureTemplate.StructureBlockInfo blockInfoGlobal,
+                                                             BlockPos blockPos,
+                                                             StructureTemplate.StructureBlockInfo blockInfo,
                                                              StructurePlaceSettings structurePlacementData) {
-        if (blockInfoGlobal.state().is(this.targetBlock.getBlock())) {
-            RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos());
+        if (blockInfo.state().is(this.targetBlock.getBlock())) {
+            RandomSource random = structurePlacementData.getRandom(blockInfo.pos());
             BlockState outputState = output.get(random);
 
             if (this.copyInputProperties) {
-                if (blockInfoGlobal.state().hasProperty(StairBlock.FACING) && outputState.hasProperty(StairBlock.FACING)) {
-                    outputState = outputState.setValue(StairBlock.FACING, blockInfoGlobal.state().getValue(StairBlock.FACING));
+                if (blockInfo.state().hasProperty(StairBlock.FACING) && outputState.hasProperty(StairBlock.FACING)) {
+                    outputState = outputState.setValue(StairBlock.FACING, blockInfo.state().getValue(StairBlock.FACING));
                 }
-                if (blockInfoGlobal.state().hasProperty(StairBlock.HALF) && outputState.hasProperty(StairBlock.HALF)) {
-                    outputState = outputState.setValue(StairBlock.HALF, blockInfoGlobal.state().getValue(StairBlock.HALF));
+                if (blockInfo.state().hasProperty(StairBlock.HALF) && outputState.hasProperty(StairBlock.HALF)) {
+                    outputState = outputState.setValue(StairBlock.HALF, blockInfo.state().getValue(StairBlock.HALF));
                 }
-                if (blockInfoGlobal.state().hasProperty(StairBlock.SHAPE) && outputState.hasProperty(StairBlock.SHAPE)) {
-                    outputState = outputState.setValue(StairBlock.SHAPE, blockInfoGlobal.state().getValue(StairBlock.SHAPE));
+                if (blockInfo.state().hasProperty(StairBlock.SHAPE) && outputState.hasProperty(StairBlock.SHAPE)) {
+                    outputState = outputState.setValue(StairBlock.SHAPE, blockInfo.state().getValue(StairBlock.SHAPE));
                 }
-                if (blockInfoGlobal.state().hasProperty(SlabBlock.TYPE) && outputState.hasProperty(SlabBlock.TYPE)) {
-                    outputState = outputState.setValue(SlabBlock.TYPE, blockInfoGlobal.state().getValue(SlabBlock.TYPE));
+                if (blockInfo.state().hasProperty(SlabBlock.TYPE) && outputState.hasProperty(SlabBlock.TYPE)) {
+                    outputState = outputState.setValue(SlabBlock.TYPE, blockInfo.state().getValue(SlabBlock.TYPE));
                 }
-                if (blockInfoGlobal.state().hasProperty(WallBlock.NORTH) && outputState.hasProperty(WallBlock.NORTH)) {
-                    outputState = outputState.setValue(WallBlock.NORTH, blockInfoGlobal.state().getValue(WallBlock.NORTH));
+                if (blockInfo.state().hasProperty(WallBlock.NORTH) && outputState.hasProperty(WallBlock.NORTH)) {
+                    outputState = outputState.setValue(WallBlock.NORTH, blockInfo.state().getValue(WallBlock.NORTH));
                 }
-                if (blockInfoGlobal.state().hasProperty(WallBlock.EAST) && outputState.hasProperty(WallBlock.EAST)) {
-                    outputState = outputState.setValue(WallBlock.EAST, blockInfoGlobal.state().getValue(WallBlock.EAST));
+                if (blockInfo.state().hasProperty(WallBlock.EAST) && outputState.hasProperty(WallBlock.EAST)) {
+                    outputState = outputState.setValue(WallBlock.EAST, blockInfo.state().getValue(WallBlock.EAST));
                 }
-                if (blockInfoGlobal.state().hasProperty(WallBlock.SOUTH) && outputState.hasProperty(WallBlock.SOUTH)) {
-                    outputState = outputState.setValue(WallBlock.SOUTH, blockInfoGlobal.state().getValue(WallBlock.SOUTH));
+                if (blockInfo.state().hasProperty(WallBlock.SOUTH) && outputState.hasProperty(WallBlock.SOUTH)) {
+                    outputState = outputState.setValue(WallBlock.SOUTH, blockInfo.state().getValue(WallBlock.SOUTH));
                 }
-                if (blockInfoGlobal.state().hasProperty(WallBlock.WEST) && outputState.hasProperty(WallBlock.WEST)) {
-                    outputState = outputState.setValue(WallBlock.WEST, blockInfoGlobal.state().getValue(WallBlock.WEST));
+                if (blockInfo.state().hasProperty(WallBlock.WEST) && outputState.hasProperty(WallBlock.WEST)) {
+                    outputState = outputState.setValue(WallBlock.WEST, blockInfo.state().getValue(WallBlock.WEST));
                 }
-                if (blockInfoGlobal.state().hasProperty(WallBlock.UP) && outputState.hasProperty(WallBlock.UP)) {
-                    outputState = outputState.setValue(WallBlock.UP, blockInfoGlobal.state().getValue(WallBlock.UP));
+                if (blockInfo.state().hasProperty(WallBlock.UP) && outputState.hasProperty(WallBlock.UP)) {
+                    outputState = outputState.setValue(WallBlock.UP, blockInfo.state().getValue(WallBlock.UP));
                 }
 
             }
@@ -130,21 +128,21 @@ public class BlockReplaceProcessor extends StructureProcessor {
             // Schedule fluid tick, if applicable
             if (levelReader instanceof WorldGenRegion worldGenRegion && (outputState.is(Blocks.WATER) || outputState.is(Blocks.LAVA))) {
                 FlowingFluid fluid = outputState.is(Blocks.WATER) ? Fluids.WATER : Fluids.LAVA;
-                worldGenRegion.scheduleTick(blockInfoGlobal.pos(), fluid, 0);
+                worldGenRegion.scheduleTick(blockInfo.pos(), fluid, 0);
             }
 
             if (this.preserveWaterlog && outputState.hasProperty(BlockStateProperties.WATERLOGGED)
-                    && blockInfoGlobal.state().hasProperty(BlockStateProperties.WATERLOGGED) && blockInfoGlobal.state().getValue(BlockStateProperties.WATERLOGGED)) {
+                    && blockInfo.state().hasProperty(BlockStateProperties.WATERLOGGED) && blockInfo.state().getValue(BlockStateProperties.WATERLOGGED)) {
                 outputState = outputState.setValue(BlockStateProperties.WATERLOGGED, true);
             }
 
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), outputState, blockInfoGlobal.nbt());
+            blockInfo = new StructureTemplate.StructureBlockInfo(blockInfo.pos(), outputState, blockInfo.nbt());
         }
-        return blockInfoGlobal;
+        return blockInfo;
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return StructureProcessorTypeModule.BLOCK_REPLACE_PROCESSOR;
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 }

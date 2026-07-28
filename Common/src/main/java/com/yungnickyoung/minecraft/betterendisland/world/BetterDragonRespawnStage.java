@@ -7,7 +7,7 @@ import com.google.common.collect.Range;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.mixin.accessor.EnderDragonFightAccessor;
 import com.yungnickyoung.minecraft.betterendisland.world.util.ExitPortalUtils;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;

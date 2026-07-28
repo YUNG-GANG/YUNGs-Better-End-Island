@@ -2,7 +2,6 @@ package com.yungnickyoung.minecraft.betterendisland.world.processor;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import com.yungnickyoung.minecraft.betterendisland.module.StructureProcessorTypeModule;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ExtraCodecs;
@@ -13,7 +12,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jspecify.annotations.NullMarked;
 
@@ -24,7 +22,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 
 @NullMarked
-public class ObsidianProcessor extends StructureProcessor {
+public class ObsidianProcessor implements StructureProcessor {
     public static final MapCodec<ObsidianProcessor> CODEC = RecordCodecBuilder.mapCodec(instance -> instance
             .group(
                     ExtraCodecs.NON_NEGATIVE_INT.fieldOf("number_times_dragon_killed").forGetter(config -> config.numberTimesDragonKilled))
@@ -40,23 +38,24 @@ public class ObsidianProcessor extends StructureProcessor {
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
                                                              BlockPos jigsawPiecePos,
                                                              BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.StructureBlockInfo blockInfoLocal,
-                                                             StructureTemplate.StructureBlockInfo blockInfoGlobal,
+                                                             BlockPos blockPos,
+                                                             StructureTemplate.StructureBlockInfo blockInfo,
                                                              StructurePlaceSettings structurePlacementData) {
-        if (blockInfoGlobal.state().is(Blocks.OBSIDIAN)) {
-            RandomSource random = structurePlacementData.getRandom(blockInfoGlobal.pos());
+        if (blockInfo.state().is(Blocks.OBSIDIAN)) {
+            RandomSource random = structurePlacementData.getRandom(blockInfo.pos());
             BlockState outputState = Blocks.OBSIDIAN.defaultBlockState();
             int dragonKills = Mth.clamp(this.numberTimesDragonKilled, 0, 10);
             float cryingChance = Mth.lerp(dragonKills / 10f, 0f, 0.5f);
             if (random.nextFloat() < cryingChance) {
                 outputState = Blocks.CRYING_OBSIDIAN.defaultBlockState();
             }
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), outputState, blockInfoGlobal.nbt());
+            blockInfo = new StructureTemplate.StructureBlockInfo(blockInfo.pos(), outputState, blockInfo.nbt());
         }
-        return blockInfoGlobal;
+        return blockInfo;
     }
 
-    protected StructureProcessorType<?> getType() {
-        return StructureProcessorTypeModule.OBSIDIAN_PROCESSOR;
+    @Override
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 }

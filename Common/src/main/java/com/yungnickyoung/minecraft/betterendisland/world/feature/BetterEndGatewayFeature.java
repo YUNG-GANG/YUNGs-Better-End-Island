@@ -29,7 +29,7 @@ import java.util.Optional;
  * Injected via {@link com.yungnickyoung.minecraft.betterendisland.mixin.EndGatewayFeatureMixin}.
  */
 public class BetterEndGatewayFeature {
-    private static final List<StructureProcessor> PROCESSORS = List.of(
+    private static final List<StructureProcessor> PROCESSORS = List.<StructureProcessor>of(
             new DragonEggProcessor()
     );
 

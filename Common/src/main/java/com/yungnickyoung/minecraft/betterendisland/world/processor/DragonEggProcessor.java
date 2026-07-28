@@ -1,14 +1,12 @@
 package com.yungnickyoung.minecraft.betterendisland.world.processor;
 
 import com.mojang.serialization.MapCodec;
-import com.yungnickyoung.minecraft.betterendisland.module.StructureProcessorTypeModule;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jspecify.annotations.NullMarked;
 
@@ -18,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Avoids overwriting the dragon egg.
  */
 @NullMarked
-public class DragonEggProcessor extends StructureProcessor {
+public class DragonEggProcessor implements StructureProcessor {
     public static final DragonEggProcessor INSTANCE = new DragonEggProcessor();
     public static final MapCodec<DragonEggProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
@@ -26,17 +24,17 @@ public class DragonEggProcessor extends StructureProcessor {
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
                                                              BlockPos jigsawPiecePos,
                                                              BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.StructureBlockInfo blockInfoLocal,
-                                                             StructureTemplate.StructureBlockInfo blockInfoGlobal,
+                                                             BlockPos blockPos,
+                                                             StructureTemplate.StructureBlockInfo blockInfo,
                                                              StructurePlaceSettings structurePlacementData) {
-        if (levelReader.getBlockState(blockInfoGlobal.pos()).is(Blocks.DRAGON_EGG)) {
-            blockInfoGlobal = new StructureTemplate.StructureBlockInfo(blockInfoGlobal.pos(), Blocks.DRAGON_EGG.defaultBlockState(), blockInfoGlobal.nbt());
+        if (levelReader.getBlockState(blockInfo.pos()).is(Blocks.DRAGON_EGG)) {
+            blockInfo = new StructureTemplate.StructureBlockInfo(blockInfo.pos(), Blocks.DRAGON_EGG.defaultBlockState(), blockInfo.nbt());
         }
-        return blockInfoGlobal;
+        return blockInfo;
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
-        return StructureProcessorTypeModule.DRAGON_EGG_PROCESSOR;
+    public MapCodec<? extends StructureProcessor> codec() {
+        return CODEC;
     }
 }
