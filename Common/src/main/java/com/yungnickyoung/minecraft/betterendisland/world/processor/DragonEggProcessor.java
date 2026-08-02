@@ -8,7 +8,6 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import org.jspecify.annotations.NullMarked;
 
@@ -18,7 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
  * Avoids overwriting the dragon egg.
  */
 @NullMarked
-public class DragonEggProcessor extends StructureProcessor {
+public class DragonEggProcessor implements StructureProcessor {
     public static final DragonEggProcessor INSTANCE = new DragonEggProcessor();
     public static final MapCodec<DragonEggProcessor> CODEC = MapCodec.unit(() -> INSTANCE);
 
@@ -26,7 +25,7 @@ public class DragonEggProcessor extends StructureProcessor {
     public StructureTemplate.StructureBlockInfo processBlock(LevelReader levelReader,
                                                              BlockPos jigsawPiecePos,
                                                              BlockPos jigsawPieceBottomCenterPos,
-                                                             StructureTemplate.StructureBlockInfo blockInfoLocal,
+                                                             BlockPos templateRelativePos,
                                                              StructureTemplate.StructureBlockInfo blockInfoGlobal,
                                                              StructurePlaceSettings structurePlacementData) {
         if (levelReader.getBlockState(blockInfoGlobal.pos()).is(Blocks.DRAGON_EGG)) {
@@ -36,7 +35,7 @@ public class DragonEggProcessor extends StructureProcessor {
     }
 
     @Override
-    protected StructureProcessorType<?> getType() {
+    public MapCodec<? extends StructureProcessor> codec() {
         return StructureProcessorTypeModule.DRAGON_EGG_PROCESSOR;
     }
 }

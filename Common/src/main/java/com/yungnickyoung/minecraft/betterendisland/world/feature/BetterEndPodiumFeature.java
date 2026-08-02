@@ -33,19 +33,19 @@ import java.util.Optional;
 public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
     private static final List<StructureProcessor> PROCESSORS = List.of(
             new BlockReplaceProcessor(
-                    Blocks.GRAY_CONCRETE.defaultBlockState(),
+                    Blocks.CONCRETE.gray().defaultBlockState(),
                     new BlockStateRandomizer(Blocks.BEDROCK.defaultBlockState()),
                     false, false, false, false),
             new DragonEggProcessor()
     );
 
     private static final StructureProcessor ACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
-            Blocks.RED_CONCRETE.defaultBlockState(),
+            Blocks.CONCRETE.red().defaultBlockState(),
             new BlockStateRandomizer(Blocks.END_PORTAL.defaultBlockState()),
             false, false, false, false);
 
     private static final StructureProcessor INACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
-            Blocks.RED_CONCRETE.defaultBlockState(),
+            Blocks.CONCRETE.red().defaultBlockState(),
             new BlockStateRandomizer(Blocks.AIR.defaultBlockState()),
             false, false, false, false);
 

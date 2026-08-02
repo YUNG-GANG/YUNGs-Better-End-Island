@@ -47,18 +47,18 @@ public class BetterSpikeFeature {
 
     private static final List<StructureProcessor> PROCESSORS = List.of(
             new BlockReplaceProcessor(
-                    Blocks.ORANGE_TERRACOTTA.defaultBlockState(),
+                    Blocks.DYED_TERRACOTTA.orange().defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.3f),
                     false, false, false, false),
             new BlockReplaceProcessor(
-                    Blocks.MAGENTA_TERRACOTTA.defaultBlockState(),
+                    Blocks.DYED_TERRACOTTA.magenta().defaultBlockState(),
                     new BlockStateRandomizer(Blocks.AIR.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.1f)
                             .addBlock(Blocks.OBSIDIAN.defaultBlockState(), 0.1f),
                     false, false, false, false),
             new BlockReplaceProcessor(
-                    Blocks.PURPLE_CONCRETE.defaultBlockState(),
+                    Blocks.CONCRETE.purple().defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState()),
                     false, false, false, false),
             new DragonEggProcessor()
@@ -103,7 +103,7 @@ public class BetterSpikeFeature {
 
         // If not initial spawn, spawn crystal and bedrock below it
         if (!isInitialSpawn) {
-            EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            EndCrystal endCrystal = net.minecraft.world.entity.EntityTypes.END_CRYSTAL.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
             if (endCrystal != null) {
                 endCrystal.setBeamTarget(config.getCrystalBeamTarget());
                 endCrystal.setInvulnerable(config.isCrystalInvulnerable());
