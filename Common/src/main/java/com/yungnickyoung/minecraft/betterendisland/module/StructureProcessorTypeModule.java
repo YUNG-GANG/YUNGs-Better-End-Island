@@ -5,16 +5,17 @@ import com.yungnickyoung.minecraft.betterendisland.world.processor.BlockReplaceP
 import com.yungnickyoung.minecraft.betterendisland.world.processor.DragonEggProcessor;
 import com.yungnickyoung.minecraft.betterendisland.world.processor.ObsidianProcessor;
 import com.yungnickyoung.minecraft.yungsapi.api.autoregister.AutoRegister;
-import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessorType;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
 
 @AutoRegister(BetterEndIslandCommon.MOD_ID)
 public class StructureProcessorTypeModule {
     @AutoRegister("block_replace_processor")
-    public static StructureProcessorType<BlockReplaceProcessor> BLOCK_REPLACE_PROCESSOR = () -> BlockReplaceProcessor.CODEC;
+    public static MapCodec<? extends StructureProcessor> BLOCK_REPLACE_PROCESSOR = BlockReplaceProcessor.CODEC;
 
     @AutoRegister("obsidian_processor")
-    public static StructureProcessorType<ObsidianProcessor> OBSIDIAN_PROCESSOR = () -> ObsidianProcessor.CODEC;
+    public static MapCodec<? extends StructureProcessor> OBSIDIAN_PROCESSOR = ObsidianProcessor.CODEC;
 
     @AutoRegister("dragon_egg_processor")
-    public static StructureProcessorType<DragonEggProcessor> DRAGON_EGG_PROCESSOR = () -> DragonEggProcessor.CODEC;
+    public static MapCodec<? extends StructureProcessor> DRAGON_EGG_PROCESSOR = DragonEggProcessor.CODEC;
 }

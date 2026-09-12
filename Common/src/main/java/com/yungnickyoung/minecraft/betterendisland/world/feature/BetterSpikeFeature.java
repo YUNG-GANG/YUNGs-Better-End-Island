@@ -1,4 +1,7 @@
 package com.yungnickyoung.minecraft.betterendisland.world.feature;
+import net.minecraft.world.entity.EntitySpawnRequest;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.DyeColor;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
@@ -45,20 +48,20 @@ public class BetterSpikeFeature {
             .expireAfterWrite(5L, TimeUnit.MINUTES)
             .build(new SpikeCacheLoader());
 
-    private static final List<StructureProcessor> PROCESSORS = List.of(
+    private static final List<StructureProcessor> PROCESSORS = List.<StructureProcessor>of(
             new BlockReplaceProcessor(
-                    Blocks.ORANGE_TERRACOTTA.defaultBlockState(),
+                    Blocks.DYED_TERRACOTTA.pick(DyeColor.ORANGE).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.3f),
                     false, false, false, false),
             new BlockReplaceProcessor(
-                    Blocks.MAGENTA_TERRACOTTA.defaultBlockState(),
+                    Blocks.DYED_TERRACOTTA.pick(DyeColor.MAGENTA).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.AIR.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.1f)
                             .addBlock(Blocks.OBSIDIAN.defaultBlockState(), 0.1f),
                     false, false, false, false),
             new BlockReplaceProcessor(
-                    Blocks.PURPLE_CONCRETE.defaultBlockState(),
+                    Blocks.CONCRETE.pick(DyeColor.PURPLE).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState()),
                     false, false, false, false),
             new DragonEggProcessor()
@@ -103,7 +106,7 @@ public class BetterSpikeFeature {
 
         // If not initial spawn, spawn crystal and bedrock below it
         if (!isInitialSpawn) {
-            EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            EndCrystal endCrystal = (EndCrystal) BuiltInRegistries.ENTITY_TYPE.get(Identifier.fromNamespaceAndPath("minecraft", "end_crystal")).orElseThrow().value().create(level.getLevel(), new EntitySpawnRequest(EntitySpawnReason.STRUCTURE, false));
             if (endCrystal != null) {
                 endCrystal.setBeamTarget(config.getCrystalBeamTarget());
                 endCrystal.setInvulnerable(config.isCrystalInvulnerable());

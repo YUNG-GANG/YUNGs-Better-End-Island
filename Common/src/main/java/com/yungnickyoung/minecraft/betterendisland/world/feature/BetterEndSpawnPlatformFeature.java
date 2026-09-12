@@ -23,7 +23,7 @@ import java.util.Optional;
  * Injected via {@link EndPlatformFeatureMixin}.
  */
 public class BetterEndSpawnPlatformFeature {
-    private static final List<StructureProcessor> PROCESSORS = List.of();
+    private static final List<StructureProcessor> PROCESSORS = List.<StructureProcessor>of();
 
     public static boolean place(ServerLevelAccessor level, BlockPos pos, boolean dropDestroyedBlocks) {
         BlockPos origin = pos.offset(0, -14, 0);

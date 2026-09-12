@@ -1,4 +1,5 @@
 package com.yungnickyoung.minecraft.betterendisland.world.feature;
+import net.minecraft.world.item.DyeColor;
 
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.world.IBetterDragonFight;
@@ -31,21 +32,21 @@ import java.util.Optional;
  * A replacement of vanilla's EndPodiumFeature that uses a customized structure template.
  */
 public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
-    private static final List<StructureProcessor> PROCESSORS = List.of(
+    private static final List<StructureProcessor> PROCESSORS = List.<StructureProcessor>of(
             new BlockReplaceProcessor(
-                    Blocks.GRAY_CONCRETE.defaultBlockState(),
+                    Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.BEDROCK.defaultBlockState()),
                     false, false, false, false),
             new DragonEggProcessor()
     );
 
     private static final StructureProcessor ACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
-            Blocks.RED_CONCRETE.defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.RED).defaultBlockState(),
             new BlockStateRandomizer(Blocks.END_PORTAL.defaultBlockState()),
             false, false, false, false);
 
     private static final StructureProcessor INACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
-            Blocks.RED_CONCRETE.defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.RED).defaultBlockState(),
             new BlockStateRandomizer(Blocks.AIR.defaultBlockState()),
             false, false, false, false);
 
