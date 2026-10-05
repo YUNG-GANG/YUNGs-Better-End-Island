@@ -14,8 +14,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.TheEndGatewayBlockEntity;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.EndGatewayConfiguration;
+import net.minecraft.world.level.levelgen.feature.EndGatewayFeature;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -33,27 +32,23 @@ public class BetterEndGatewayFeature {
             new DragonEggProcessor()
     );
 
-    public static boolean place(FeaturePlaceContext<EndGatewayConfiguration> ctx) {
-        BlockPos origin = ctx.origin();
-        WorldGenLevel level = ctx.level();
-        EndGatewayConfiguration config = ctx.config();
-
+    public static boolean place(EndGatewayFeature config, WorldGenLevel level, RandomSource random, BlockPos origin) {
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
             numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
         }
 
         Identifier template = Identifier.fromNamespaceAndPath(BetterEndIslandCommon.MOD_ID, "gateway");
-        boolean placed = placeTemplate(level, ctx.random(), origin, template, numberTimesDragonKilled);
+        boolean placed = placeTemplate(level, random, origin, template, numberTimesDragonKilled);
 
-        BlockPos portalPos = new BlockPos(origin);
+        BlockPos portalPos = origin.immutable();
         level.setBlock(portalPos, Blocks.END_GATEWAY.defaultBlockState(), 3);
 
         // Configure block entity for gateway
-        config.getExit().ifPresent(exitPos -> {
+        config.exit().ifPresent(exitPos -> {
             BlockEntity blockentity = level.getBlockEntity(portalPos);
             if (blockentity instanceof TheEndGatewayBlockEntity theendgatewayblockentity) {
-                theendgatewayblockentity.setExitPosition(exitPos, config.isExitExact());
+                theendgatewayblockentity.setExitPosition(exitPos, config.exact());
                 blockentity.setChanged();
             }
         });
@@ -62,7 +57,7 @@ public class BetterEndGatewayFeature {
     }
 
     private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Identifier id, int numberTimesDragonKilled) {
-        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
+        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureTemplateManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
             return false;

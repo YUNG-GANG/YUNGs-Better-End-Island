@@ -14,12 +14,10 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
-import net.minecraft.world.level.levelgen.feature.SpikeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.EndSpikeConfiguration;
-import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 import net.minecraft.world.phys.AABB;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class EndSpikeUtils {
@@ -41,7 +39,7 @@ public class EndSpikeUtils {
             }
 
             // Place new spike
-            EndSpikeConfiguration spikeConfig = new EndSpikeConfiguration(true, ImmutableList.of(spike), null);
+            EndSpikeFeature spikeConfig = new EndSpikeFeature(ImmutableList.of(spike), true, Optional.empty());
             BetterSpikeFeature.placeSpike(serverLevel, RandomSource.create(), spikeConfig, spike, true);
         });
     }

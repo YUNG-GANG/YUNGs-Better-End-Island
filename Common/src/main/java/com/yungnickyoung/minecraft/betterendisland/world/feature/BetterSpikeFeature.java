@@ -16,8 +16,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.WorldGenLevel;
@@ -25,7 +27,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.EndSpikeConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -47,18 +48,18 @@ public class BetterSpikeFeature {
 
     private static final List<StructureProcessor> PROCESSORS = List.of(
             new BlockReplaceProcessor(
-                    Blocks.ORANGE_TERRACOTTA.defaultBlockState(),
+                    Blocks.DYED_TERRACOTTA.pick(DyeColor.ORANGE).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.3f),
                     false, false, false, false),
             new BlockReplaceProcessor(
-                    Blocks.MAGENTA_TERRACOTTA.defaultBlockState(),
+                    Blocks.DYED_TERRACOTTA.pick(DyeColor.MAGENTA).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.AIR.defaultBlockState())
                             .addBlock(Blocks.CRYING_OBSIDIAN.defaultBlockState(), 0.1f)
                             .addBlock(Blocks.OBSIDIAN.defaultBlockState(), 0.1f),
                     false, false, false, false),
             new BlockReplaceProcessor(
-                    Blocks.PURPLE_CONCRETE.defaultBlockState(),
+                    Blocks.CONCRETE.pick(DyeColor.PURPLE).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.OBSIDIAN.defaultBlockState()),
                     false, false, false, false),
             new DragonEggProcessor()
@@ -70,7 +71,7 @@ public class BetterSpikeFeature {
         return SPIKE_CACHE.getUnchecked(seed);
     }
 
-    public static void placeSpike(ServerLevelAccessor level, RandomSource randomSource, EndSpikeConfiguration config, EndSpikeFeature.EndSpike spike, boolean isInitialSpawn) {
+    public static void placeSpike(ServerLevelAccessor level, RandomSource randomSource, EndSpikeFeature config, EndSpikeFeature.EndSpike spike, boolean isInitialSpawn) {
         // Choose templates based on spike and config.
         // First template ID is the top part, second is the bottom part.
         Pair<Identifier, Identifier> templates = chooseTemplates(spike, isInitialSpawn, randomSource.nextFloat() < 0.2f);
@@ -103,10 +104,10 @@ public class BetterSpikeFeature {
 
         // If not initial spawn, spawn crystal and bedrock below it
         if (!isInitialSpawn) {
-            EndCrystal endCrystal = EntityType.END_CRYSTAL.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
+            EndCrystal endCrystal = EntityTypes.END_CRYSTAL.create(level.getLevel(), EntitySpawnReason.STRUCTURE);
             if (endCrystal != null) {
-                endCrystal.setBeamTarget(config.getCrystalBeamTarget());
-                endCrystal.setInvulnerable(config.isCrystalInvulnerable());
+                endCrystal.setBeamTarget(config.crystalBeamTarget().orElse(null));
+                endCrystal.setPermanentlyInvulnerable(config.crystalInvulnerable());
                 int crystalY = topY + ((IEndSpike) spike).getCrystalYOffset();
                 endCrystal.snapTo((double) spike.getCenterX() + 0.5D, crystalY, (double) spike.getCenterZ() + 0.5D, randomSource.nextFloat() * 360.0F, 0.0F);
                 level.addFreshEntity(endCrystal);
@@ -130,7 +131,7 @@ public class BetterSpikeFeature {
     }
 
     private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, Identifier id, int numberTimesDragonKilled) {
-        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
+        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureTemplateManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
             return false;

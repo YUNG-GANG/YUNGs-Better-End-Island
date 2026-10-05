@@ -37,7 +37,7 @@ public class BetterEndSpawnPlatformFeature {
 
     private static boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos,
                                          Identifier id, int numberTimesDragonKilled, boolean destroyBlocks) {
-        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
+        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureTemplateManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
             return false;

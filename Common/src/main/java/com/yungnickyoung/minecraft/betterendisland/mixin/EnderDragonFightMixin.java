@@ -39,8 +39,6 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.feature.EndPlatformFeature;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
 import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
-import net.minecraft.world.level.levelgen.feature.SpikeFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 import net.minecraft.world.level.saveddata.SavedData;
 import org.jspecify.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -277,11 +275,11 @@ public abstract class EnderDragonFightMixin extends SavedData implements IBetter
             // Spawn the central tower
             BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(true, false, false);
             BlockPos spawnPos = this.exitPortalLocation.below(MINIMUM_PORTAL_Y);
-            endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+            endPodiumFeature.place(this.level, RandomSource.create(), spawnPos);
         } else {
             // Spawn the vanilla podium
             EndPodiumFeature endPodiumFeature = new EndPodiumFeature(false);
-            if (endPodiumFeature.place(FeatureConfiguration.NONE, this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), this.exitPortalLocation)) {
+            if (endPodiumFeature.place(this.level, this.level.getChunkSource().getGenerator(), RandomSource.create(), this.exitPortalLocation)) {
                 int $$2 = Mth.positiveCeilDiv(4, 16);
                 this.level.getChunkSource().chunkMap.waitForLightBeforeSending(ChunkPos.containing(this.exitPortalLocation), $$2);
             }
@@ -466,7 +464,7 @@ public abstract class EnderDragonFightMixin extends SavedData implements IBetter
                 .map((e) -> e.getEntity(this.level, EndCrystal.class))
                 .filter(Objects::nonNull)
                 .forEach(crystal -> {
-                    crystal.setInvulnerable(false);
+                    crystal.setPermanentlyInvulnerable(false);
                     crystal.setBeamTarget(null);
                 });
     }

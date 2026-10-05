@@ -11,7 +11,7 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 
 public class ConfigModuleNeoForge {
     public static void init(ModContainer container) {
-        container.registerConfig(ModConfig.Type.COMMON, BEIConfigNeoForge.SPEC, "betterendisland-neoforge-1_21.toml");
+        container.registerConfig(ModConfig.Type.LOCAL, BEIConfigNeoForge.SPEC, "betterendisland-neoforge-1_21.toml");
         NeoForge.EVENT_BUS.addListener(ConfigModuleNeoForge::onWorldLoad);
         BetterEndIslandNeoForge.loadingContextEventBus.addListener(ConfigModuleNeoForge::onConfigChange);
     }

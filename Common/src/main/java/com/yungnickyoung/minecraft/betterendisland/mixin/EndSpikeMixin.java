@@ -3,7 +3,6 @@ package com.yungnickyoung.minecraft.betterendisland.mixin;
 import com.yungnickyoung.minecraft.betterendisland.world.IEndSpike;
 import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
-import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import net.minecraft.world.phys.AABB;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

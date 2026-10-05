@@ -8,7 +8,6 @@ import net.minecraft.util.Util;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
-import net.minecraft.world.level.levelgen.feature.SpikeFeature;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;

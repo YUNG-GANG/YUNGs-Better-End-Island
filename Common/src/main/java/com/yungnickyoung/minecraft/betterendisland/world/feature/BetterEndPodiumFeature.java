@@ -11,14 +11,12 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
-import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.templatesystem.LiquidSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureProcessor;
@@ -30,22 +28,22 @@ import java.util.Optional;
 /**
  * A replacement of vanilla's EndPodiumFeature that uses a customized structure template.
  */
-public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
+public class BetterEndPodiumFeature {
     private static final List<StructureProcessor> PROCESSORS = List.of(
             new BlockReplaceProcessor(
-                    Blocks.GRAY_CONCRETE.defaultBlockState(),
+                    Blocks.CONCRETE.pick(DyeColor.GRAY).defaultBlockState(),
                     new BlockStateRandomizer(Blocks.BEDROCK.defaultBlockState()),
                     false, false, false, false),
             new DragonEggProcessor()
     );
 
     private static final StructureProcessor ACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
-            Blocks.RED_CONCRETE.defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.RED).defaultBlockState(),
             new BlockStateRandomizer(Blocks.END_PORTAL.defaultBlockState()),
             false, false, false, false);
 
     private static final StructureProcessor INACTIVE_PORTAL_PROCESSOR = new BlockReplaceProcessor(
-            Blocks.RED_CONCRETE.defaultBlockState(),
+            Blocks.CONCRETE.pick(DyeColor.RED).defaultBlockState(),
             new BlockStateRandomizer(Blocks.AIR.defaultBlockState()),
             false, false, false, false);
 
@@ -54,17 +52,12 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
     private final boolean isActive;
 
     public BetterEndPodiumFeature(boolean isInitialSpawn, boolean isBottomOnly, boolean isActive) {
-        super(NoneFeatureConfiguration.CODEC);
         this.isInitialSpawn = isInitialSpawn;
         this.isBottomOnly = isBottomOnly;
         this.isActive = isActive;
     }
 
-    public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> ctx) {
-        ServerLevelAccessor level = ctx.level();
-        RandomSource randomSource = ctx.random();
-        BlockPos pos = ctx.origin();
-
+    public boolean place(ServerLevelAccessor level, RandomSource randomSource, BlockPos pos) {
         int numberTimesDragonKilled = 0;
         if (level instanceof ServerLevel serverLevel && serverLevel.getDragonFight() != null) {
             numberTimesDragonKilled = ((IBetterDragonFight) serverLevel.getDragonFight()).getNumTimesDragonKilled();
@@ -81,7 +74,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
                 BlockPos crystalPos = centerPos.relative(direction, 8);
                 EndCrystal crystal = new EndCrystal((Level) level, crystalPos.getX() + 0.5D, crystalPos.getY(), crystalPos.getZ() + 0.5D);
                 crystal.setShowBottom(false);
-                crystal.setInvulnerable(true); // Prevent player destroying crystals, which would result in a soft lock
+                crystal.setPermanentlyInvulnerable(true); // Prevent player destroying crystals, which would result in a soft lock
                 level.addFreshEntity(crystal);
             }
         }
@@ -99,7 +92,7 @@ public class BetterEndPodiumFeature extends Feature<NoneFeatureConfiguration> {
     }
 
     private boolean placeTemplate(ServerLevelAccessor level, RandomSource randomSource, BlockPos centerPos, Rotation rotation, Identifier id, int numberTimesDragonKilled) {
-        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureManager().get(id);
+        Optional<StructureTemplate> templateOptional = level.getLevel().getStructureTemplateManager().get(id);
         if (templateOptional.isEmpty()) { // Unsuccessful creation. Name is probably invalid.
             BetterEndIslandCommon.LOGGER.warn("Failed to create invalid feature {}", id);
             return false;

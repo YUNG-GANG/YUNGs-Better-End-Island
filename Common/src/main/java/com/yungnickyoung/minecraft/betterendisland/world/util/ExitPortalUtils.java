@@ -13,7 +13,6 @@ import net.minecraft.world.entity.boss.enderdragon.EndCrystal;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.EndPodiumFeature;
-import net.minecraft.world.level.levelgen.feature.configurations.FeatureConfiguration;
 
 public class ExitPortalUtils {
     /**
@@ -40,7 +39,7 @@ public class ExitPortalUtils {
             // Spawn the central tower
             BetterEndPodiumFeature endPodiumFeature = new BetterEndPodiumFeature(dragonFight.isFirstExitPortalSpawn(), isBottomOnly, isActive);
             BlockPos spawnPos = fightAccessor.getPortalLocation().below(5);
-            endPodiumFeature.place(FeatureConfiguration.NONE, serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), spawnPos);
+            endPodiumFeature.place(serverLevel, RandomSource.create(), spawnPos);
         } else {
             // Spawn the vanilla podium
             EndPodiumFeature endPodiumFeature = new EndPodiumFeature(isActive);
@@ -51,7 +50,7 @@ public class ExitPortalUtils {
                 spawnPos = spawnPos.above(4);
             }
 
-            if (endPodiumFeature.place(FeatureConfiguration.NONE, serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), spawnPos)) {
+            if (endPodiumFeature.place(serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), spawnPos)) {
                 int $$2 = Mth.positiveCeilDiv(4, 16);
                 serverLevel.getChunkSource().chunkMap.waitForLightBeforeSending(ChunkPos.containing(spawnPos), $$2);
             }
@@ -63,7 +62,7 @@ public class ExitPortalUtils {
                     BlockPos crystalPos = centerPos.relative(direction, 3);
                     EndCrystal crystal = new EndCrystal(serverLevel, crystalPos.getX() + 0.5D, crystalPos.getY(), crystalPos.getZ() + 0.5D);
                     crystal.setShowBottom(false);
-                    crystal.setInvulnerable(true); // Prevent player destroying crystals, which would result in a soft lock
+                    crystal.setPermanentlyInvulnerable(true); // Prevent player destroying crystals, which would result in a soft lock
                     serverLevel.addFreshEntity(crystal);
                 }
             }
@@ -113,5 +112,3 @@ public class ExitPortalUtils {
         return portalPos;
     }
 }
-
-

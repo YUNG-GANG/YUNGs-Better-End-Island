@@ -4,7 +4,7 @@ import me.shedaniel.autoconfig.ConfigData;
 import me.shedaniel.autoconfig.annotation.Config;
 import me.shedaniel.autoconfig.annotation.ConfigEntry;
 
-@Config(name="betterendisland-fabric-26_1")
+@Config(name="betterendisland-fabric-26_3")
 public class BEIConfigFabric implements ConfigData {
     @ConfigEntry.Category("YUNG's Better End Island")
     @ConfigEntry.Gui.TransitiveObject

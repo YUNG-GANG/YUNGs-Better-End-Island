@@ -7,7 +7,7 @@ import com.google.common.collect.Range;
 import com.yungnickyoung.minecraft.betterendisland.BetterEndIslandCommon;
 import com.yungnickyoung.minecraft.betterendisland.mixin.accessor.EnderDragonFightAccessor;
 import com.yungnickyoung.minecraft.betterendisland.world.util.ExitPortalUtils;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -23,13 +23,12 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.dimension.end.EnderDragonFight;
 import net.minecraft.world.level.levelgen.feature.EndSpikeFeature;
-import net.minecraft.world.level.levelgen.feature.Feature;
-import net.minecraft.world.level.levelgen.feature.configurations.EndSpikeConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public enum BetterDragonRespawnStage implements StringRepresentable {
     START("start") {
@@ -101,8 +100,8 @@ public enum BetterDragonRespawnStage implements StringRepresentable {
                         }
 
                         // Place new spike
-                        EndSpikeConfiguration spikeConfig = new EndSpikeConfiguration(true, ImmutableList.of(spike), new BlockPos(0, 128, 0));
-                        Feature.END_SPIKE.place(spikeConfig, serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), new BlockPos(spike.getCenterX(), 45, spike.getCenterZ()));
+                        EndSpikeFeature spikeFeature = new EndSpikeFeature(ImmutableList.of(spike), true, Optional.of(new BlockPos(0, 128, 0)));
+                        spikeFeature.place(serverLevel, serverLevel.getChunkSource().getGenerator(), RandomSource.create(), new BlockPos(spike.getCenterX(), 45, spike.getCenterZ()));
                     }
                 } else if (isFirstTickForSpike) {
                     ((IBetterDragonFight) dragonFight).advanceRespawnStage(SUMMONING_DRAGON);
